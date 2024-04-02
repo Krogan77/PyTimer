@@ -1,7 +1,8 @@
 
 """ Utils.py / Contient les fonctions utilitaires du projet. """
-from datetime import timedelta, datetime
+from datetime import timedelta
 from pathlib import Path
+import os
 
 from plyer import notification
 from tinydb import TinyDB
@@ -17,6 +18,22 @@ data_dir = CUR_DIR / "data"
 data_dir.mkdir(exist_ok=True)
 config_backup_file = data_dir / "config_backup.json"
 
+
+def check_work_path():
+	"""
+	Permet de vérifier le chemin du projet.
+	> Lorsque l'application se lance
+
+	- Cela sert à vérifier si on est sur l'emplacement de travail de l'application.
+	-
+	"""
+	expected_path = r"C:\Users\yoann\code\PycharmProjects\2.Project\Project-Perso\PyTimer"
+	# Normalisation des chemins pour s'assurer qu'ils sont comparables
+	cur_dir_normalized = os.path.normcase(os.path.normpath(CUR_DIR))
+	expected_path_normalized = os.path.normcase(os.path.normpath(expected_path))
+	
+	return cur_dir_normalized == expected_path_normalized
+##
 
 def get_db():
 	""" Récupère la base de données. """
@@ -83,21 +100,6 @@ def save_config_backup(config: dict):
 		print(f"Error writing config file: {e}")
 
 
-#
-
-# -------  TIMERS  -------- #
-
-
-def start_timer(qtimer, interval: int = 1000):
-	""" Démarre le timer. """
-	pass
-
-
-def update_timer(qtimer):
-	""" Met à jour le timer. """
-	pass
-
-
 def set_stylesheet(frame, style_sheet):
 	""" Charger le contenu de la feuille de style depuis le fichier """
 	qss_path = Path(style_sheet)
@@ -155,7 +157,7 @@ def clamp(value: int | float, min_value: int | float, max_value: int | float) ->
 def format_duration(delta: int | float | timedelta) -> str:
 	""" Formate la durée en heures, minutes et secondes
 	
-	:param total_seconds: Durée en secondes
+	:param delta: Durée en secondes
 	:return: Durée formatée en heures, minutes et secondes
 	"""
 	result = "-" if isinstance(delta, timedelta) and delta.total_seconds() < 0 else ""
@@ -192,10 +194,7 @@ def send_notify(title, message):
 	)
 
 
-def dbg(*args,
-		sep=" ",
-		end="\n",
-		):
+def dbg(*args, sep=" ", end="\n"):
 	
 	""" Affiche les arguments si le mode debug est activé
 
@@ -227,6 +226,10 @@ if __name__ == '__main__':
 	
 	dbg("Test debug log")
 	dbg("Test debug log")
+	
+	# Test check_pass()
+	print(CUR_DIR)
+	print(check_work_path())
 	
 	#
 	pass

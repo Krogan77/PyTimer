@@ -5,6 +5,7 @@
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QSystemTrayIcon, QVBoxLayout, QWidget
 
+from utils import check_work_path
 from window.options_dialog import OptionDialog
 from app.timer.timer_view import TimerView
 
@@ -16,15 +17,20 @@ class MainWindow(QMainWindow):
 		super().__init__()
 		
 		self.setWindowTitle('PyTimer')
-		self.setWindowIcon(QIcon("lib/icons/main_icon.png"))
 		self.setFixedSize(670, 370)
+		
+		# Vérifie l'emplacement de l'application pour différencier les icônes
+		if check_work_path():
+			self.setWindowIcon(QIcon("lib/icons/icon_work.png"))
+		else:
+			self.setWindowIcon(QIcon("lib/icons/main_icon.png"))
 		
 		# Récupère la sauvegarde et configure les options
 		self.set_options()
 		
 		# Création de l'icône de la barre système
 		self.create_tray_icon()
-
+		
 		self.set_variables()
 		self.setup_ui()
 		self.setup_connections()
