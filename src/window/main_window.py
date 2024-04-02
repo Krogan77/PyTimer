@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
 		super().__init__()
 		
 		self.setWindowTitle('PyTimer')
-		self.setFixedSize(670, 370)
+		self.setMinimumSize(390, 370)
 		
 		# Vérifie l'emplacement de l'application pour différencier les icônes
 		if check_work_path():

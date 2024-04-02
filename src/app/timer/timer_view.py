@@ -21,13 +21,13 @@ Last updated :
 
 from datetime import datetime
 
-from PySide6.QtCore import Qt, Slot, QTimer
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QListWidget, QListWidgetItem
+from PySide6.QtCore import Qt, QTimer
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton
 
+from app.timer.timer_dialog import TimerDialog
 from utils import send_notify
 
 from app.timer.dates import new_dates
-from app.timer.timer_form import TimerForm
 from app.timer.timer_widget import TimerWidget
 
 
@@ -46,14 +46,15 @@ class TimerView(QWidget):
 		self.hlayout = QHBoxLayout()
 		self.setLayout(self.hlayout)
 		
+		self.vlayout = QVBoxLayout()
+		self.hlayout.addLayout(self.vlayout)
+		
+		self.btn_new_timer = QPushButton("Nouveau Timer")
+		self.vlayout.addWidget(self.btn_new_timer)
+		
 		self.lst_timer = QListWidget()
 		self.lst_timer.setFixedWidth(350)
-		self.hlayout.addWidget(self.lst_timer)
-		
-		
-		# Layout du formulaire
-		self.timer_form = TimerForm()
-		self.hlayout.addWidget(self.timer_form)
+		self.vlayout.addWidget(self.lst_timer)
 		
 		# Permet de repousser les éléments sur la gauche
 		# self.widget_space = QWidget()
@@ -96,14 +97,11 @@ class TimerView(QWidget):
 				margin: 3px;
 			}
 			""")
-			
-		
-		self.hlayout.setAlignment(Qt.AlignRight)
 	
 	#
 	def setup_connections(self):
 		""" Création des connexions entre les widgets """
-		self.timer_form.submitted.connect(self.new_timer)
+		self.btn_new_timer.clicked.connect(self.create_timer)
 		pass
 	
 	#
@@ -137,8 +135,7 @@ class TimerView(QWidget):
 				# Supprimer la date traitée ou la mettre à jour
 				self.dates.pop(0)
 	
-	@Slot()
-	def new_timer(self, timer):
+	def add_timer(self, timer):
 		""" Création d'un nouveau timer !
 		- Appeler par le signal du formulaire
 		- Récupère le timer et le place dans son widget puis dans le list widget.
@@ -153,6 +150,13 @@ class TimerView(QWidget):
 		self.lst_timer.addItem(self.item)
 		self.lst_timer.setItemWidget(self.item, self.timer_widget)
 		
+	
+	def create_timer(self):
+		""" Création d'un nouveau timer """
+		dialog = TimerDialog(self)
+		if dialog.exec():
+			timer = dialog.get_timer()
+			self.add_timer(timer)
 	
 	def check_timer(self):
 		""" Passe sur les éléments de la liste pour mettre à jour les timers actifs """
