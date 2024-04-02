@@ -159,6 +159,7 @@ cython_debug/
 .idea/
 
 # Personal IDE config
+data/
 notes.txt
 note.txt
 note*
