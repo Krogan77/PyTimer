@@ -20,15 +20,17 @@ from PySide6.QtCore import QSize, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton
 
+from utils import dbg
+
 
 class TimerWidget(QWidget):
 	submit_dates = Signal(datetime)
+	submit_timer = Signal(object)
 	
-	def __init__(self, parent, timer):
+	def __init__(self, timer=None, parent=None):
 		super().__init__()
-		
-		self.parent = parent
 		self.timer = timer
+		self.parent = parent
 		
 		self.setup_ui()
 		self.set_style()
@@ -107,7 +109,8 @@ class TimerWidget(QWidget):
 		self.btn_play.clicked.connect(self.start_timer)
 		
 		self.btn_reset.clicked.connect(self.reset_timer)
-		pass
+		
+		self.btn_modify.clicked.connect(self.modify_timer)
 	
 	#
 	def set_default_values(self):
@@ -141,7 +144,7 @@ class TimerWidget(QWidget):
 			return
 		
 		self.timer.start_timer()
-		print(self.timer._end_date)
+		dbg(self.timer._end_date)
 		self.lb_end_date.setText(str(self.timer.end_date))
 		
 		self.set_style_btn_start()
@@ -151,10 +154,10 @@ class TimerWidget(QWidget):
 		#  vérifier si le timer est actif, modifier le bouton reset en conséquence
 		#  afin qu'il devienne un bouton pour ajouter du temps ou redevenienne un bouton reset
 		#  - Modifier l'icône du bouton et ajouter un if-else pour gérer la logique du nouveau bouton reset
-		#  devra modifier l’affichage en soustrayant le temps qui a été rajouter a la durée restante pour qu’elle reste négative
+		#  devra modifier l’affichage en soustrayant le temps qui a été rajouté a la durée restante pour qu’elle reste négative
 		#  :
 		#  Ce qui veut dire que pour reset le timer il faudra le mettre en pause pour avoir accès au bouton reset
-		#  et le bouton start sera aussi un bouton reset lorsque le timer sera terminé et en pause.
+		#  et le bouton start sera aussi un bouton reset lorsque le timer sera terminé ET en pause.
 	
 	
 	def update_timeleft(self):
@@ -176,6 +179,10 @@ class TimerWidget(QWidget):
 		self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
 		self.lb_timeleft.setStyleSheet("color: white;")
 		self.check_color = False
+	
+	def modify_timer(self):
+		""" Envoi le signal pour la modification """
+		self.submit_timer.emit(self.timer)
 	
 	def set_style_btn_start(self):
 		""" Modification du style du bouton start """

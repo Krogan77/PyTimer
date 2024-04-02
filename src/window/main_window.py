@@ -5,7 +5,7 @@
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QSystemTrayIcon, QVBoxLayout, QWidget
 
-from utils import check_work_path
+from utils import check_work_path, create_log_file, dbg
 from window.options_dialog import OptionDialog
 from app.timer.timer_view import TimerView
 
@@ -24,6 +24,8 @@ class MainWindow(QMainWindow):
 			self.setWindowIcon(QIcon("lib/icons/icon_work.png"))
 		else:
 			self.setWindowIcon(QIcon("lib/icons/main_icon.png"))
+			
+		create_log_file()
 		
 		# Récupère la sauvegarde et configure les options
 		self.set_options()
@@ -121,7 +123,7 @@ class MainWindow(QMainWindow):
 			self.tray.setIcon(QIcon("lib/icons/main_icon.png"))
 			self.tray.setVisible(True)
 		except Exception:
-			print("Impossible de charger l'icône système.")
+			dbg("Impossible de charger l'icône système.")
 	
 	def toggle_window(self):
 		""" Affiche ou cache la fenêtre """

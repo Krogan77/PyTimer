@@ -25,7 +25,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton
 
 from app.timer.timer_dialog import TimerDialog
-from utils import send_notify
+from utils import send_notify, dbg
 
 from app.timer.dates import new_dates
 from app.timer.timer_widget import TimerWidget
@@ -142,8 +142,8 @@ class TimerView(QWidget):
 		"""
 		
 		self.item = QListWidgetItem()
-		
-		self.timer_widget = TimerWidget(self, timer)
+		self.timer_widget = TimerWidget(parent=self, timer=timer)
+		self.timer_widget.submit_timer.connect(self.create_timer)
 		
 		self.item.setSizeHint(self.timer_widget.sizeHint())
 		
@@ -151,19 +151,27 @@ class TimerView(QWidget):
 		self.lst_timer.setItemWidget(self.item, self.timer_widget)
 		
 	
-	def create_timer(self):
+	def create_timer(self, timer=None):
 		""" Création d'un nouveau timer """
-		dialog = TimerDialog(self)
-		if dialog.exec():
-			timer = dialog.get_timer()
-			self.add_timer(timer)
+		dbg("create timer = ", timer)
+		if not timer:
+			dialog = TimerDialog(self)
+			if dialog.exec():
+				timer = dialog.get_timer()
+				self.add_timer(timer)
+		else:
+			dbg("modif timer = ", timer)
+			dialog = TimerDialog(self, timer)
+			if dialog.exec():
+				timer = dialog.get_timer()
+				dbg("timer after modif = ", timer)
+				# todo pb: ne modifie pas encore le timer dans la liste
 	
 	def check_timer(self):
 		""" Passe sur les éléments de la liste pour mettre à jour les timers actifs """
 		
 		for widget in self.lst_timer.findChildren(TimerWidget):
 			widget.update_timeleft()
-				
 		
 	
 	def closeEvent(self, event):

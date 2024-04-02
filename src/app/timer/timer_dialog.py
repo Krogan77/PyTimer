@@ -24,6 +24,7 @@ from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLabel, QLineEd
 
 from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE
 from app.timer.timer import Timer
+from utils import dbg
 
 
 class TimerDialog(QDialog):
@@ -31,9 +32,10 @@ class TimerDialog(QDialog):
 		super().__init__(parent)
 		
 		self.timer = timer
+		dbg("timerdialog timer = ", self.timer)  # todo print
 		self.parent = parent
 		
-		self.create_variables()
+		# self.create_variables()
 		self.setup_ui()
 		self.set_style()
 		self.setup_connections()
@@ -121,17 +123,16 @@ class TimerDialog(QDialog):
 		self.lb_count_char_name.setAlignment(Qt.AlignRight)
 		self.lb_count_char_message.setAlignment(Qt.AlignRight)
 		
-		self.setStyleSheet("""
-
-					QLineEdit {
-						border-radius: 5px;
-					}
-
-					QTextEdit {
-						border-radius: 10px;
-					}
-
-					""")
+		self.setStyleSheet(
+			"""
+				QLineEdit {
+					border-radius: 5px;
+				}
+				
+				QTextEdit {
+					border-radius: 10px;
+				}
+				""")
 	##
 	
 	#
@@ -158,6 +159,10 @@ class TimerDialog(QDialog):
 	#
 	def set_default_values(self):
 		""" Définition des valeurs par défaut """
+		if self.timer:
+			self.le_name_timer.setText(self.timer.title)
+			self.te_content_timer.setPlainText(self.timer.message)
+			# todo : modifier les autre champs si possible
 		pass
 	##
 	
@@ -370,7 +375,7 @@ class TimerDialog(QDialog):
 	
 	def get_timer(self):
 		""" Renvoie le timer créé """
-		print(self.timer)  # todo print
+		dbg(self.timer)  # todo print
 		return self.timer
 	
 	##
@@ -379,7 +384,7 @@ class TimerDialog(QDialog):
 	def keyPressEvent(self, event):
 		""" Permet de soumettre le formulaire avec la touche entrée """
 		if event.key() == Qt.Key_Return and not (event.modifiers() & Qt.ShiftModifier):
-			self.submit_form()
+			self.parent.create_timer()
 		else:
 			super().keyPressEvent(event)
 	

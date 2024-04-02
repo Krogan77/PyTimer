@@ -130,7 +130,7 @@ def create_log_file():
 	
 	config_log(log_path, logging.DEBUG)
 	
-	logging.debug("log file created at : " + _date)
+	dbg("log file created at : " + _date)
 
 
 def config_log(filepath, level, date: bool = False):
@@ -221,15 +221,15 @@ def dbg(*args, sep=" ", end="\n"):
 if __name__ == '__main__':
 	print(CUR_DIR)
 	
-	print("Test de création d'un fichier de log :")
-	create_log_file()
+	# print("Test de création d'un fichier de log :")
+	# create_log_file()
 	
-	dbg("Test debug log")
-	dbg("Test debug log")
+	# dbg("Test debug log")
+	# dbg("Test debug log")
 	
 	# Test check_pass()
-	print(CUR_DIR)
-	print(check_work_path())
+	# print(CUR_DIR)
+	# print(check_work_path())
 	
 	#
 	pass

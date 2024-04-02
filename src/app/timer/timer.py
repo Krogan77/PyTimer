@@ -27,7 +27,7 @@ from typing import Optional
 
 from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE
 from app.timer.dates import new_date
-from utils import format_duration, send_notify
+from utils import format_duration, send_notify, dbg
 
 
 @dataclass
@@ -221,11 +221,11 @@ if __name__ == '__main__':
 	              timer=16058,
 	              )
 	
-	print(timer)
+	dbg(timer)
 	
 	# Test de la création de date de fin
 	timer.start_timer()
-	print("Création de la date de fin : \n", timer, "\n")
+	dbg("Création de la date de fin : \n", timer, "\n")
 	
 	
 	# Test du calcul du temps restant
@@ -236,15 +236,15 @@ if __name__ == '__main__':
 		# On met à jour le temps restant
 		timer.set_timeleft()
 		# On affiche le temps restant
-		print("Test du calcul du temps restant : \n", timer._timeleft, "\n")
+		dbg("Test du calcul du temps restant : \n", timer._timeleft, "\n")
 	
 	
 	# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 	# Test de création d'une date et du calcul du timedelta.
 
 	# time_left = new_date(20) - datetime.now()
-	# print(time_left, type(time_left), "\n")
-	# print(new_date(time_left))
+	# dbg(time_left, type(time_left), "\n")
+	# dbg(new_date(time_left))
 	# >
 	
 
@@ -252,10 +252,10 @@ if __name__ == '__main__':
 	# Test de calcul avec un timedelta négatif
 
 	# time_left = new_date(-20) - datetime.now()
-	# print(time_left, type(time_left), "\n")
+	# dbg(time_left, type(time_left), "\n")
 	#
 	# # conversion en secondes
-	# print(time_left.total_seconds())
+	# dbg(time_left.total_seconds())
 	
 	#
 	pass
