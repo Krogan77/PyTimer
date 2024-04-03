@@ -35,7 +35,7 @@ class TimerDialog(QDialog):
 		dbg("timerdialog timer = ", self.timer)  # todo print
 		self.parent = parent
 		
-		# self.create_variables()
+		self.create_variables()
 		self.setup_ui()
 		self.set_style()
 		self.setup_connections()
@@ -45,6 +45,7 @@ class TimerDialog(QDialog):
 	#
 	def create_variables(self):
 		""" Définition des variables """
+		self.create_mode = True  # Mode de la fenêtre, création ou modification
 		pass
 	##
 	
@@ -104,6 +105,7 @@ class TimerDialog(QDialog):
 		self.hlayout_spn.addWidget(self.spn_seconds)
 		
 		self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+		self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
 		self.vlayout.addWidget(self.button_box)
 		
 		self.lb_result = QLabel("")
@@ -160,10 +162,13 @@ class TimerDialog(QDialog):
 	def set_default_values(self):
 		""" Définition des valeurs par défaut """
 		if self.timer:
+			self.create_mode = False
 			self.le_name_timer.setText(self.timer.title)
 			self.te_content_timer.setPlainText(self.timer.message)
-			# todo : modifier les autre champs si possible
-		pass
+			self.spn_hours.setValue(self.timer.hours)
+			self.spn_minutes.setValue(self.timer.minutes)
+			self.spn_seconds.setValue(self.timer.seconds)
+		
 	##
 	
 	#
@@ -366,7 +371,14 @@ class TimerDialog(QDialog):
 		title = self.le_name_timer.text()
 		message = self.te_content_timer.toPlainText()
 		duration = self.duration
-		self.timer = Timer(title, message, duration)
+		
+		if self.create_mode:
+			self.timer = Timer(title, message, duration)
+		else:
+			self.timer.title = title
+			self.timer.message = message
+			self.timer.timer = self.duration
+			
 		super().accept()
 	
 	def reject(self):
@@ -384,7 +396,7 @@ class TimerDialog(QDialog):
 	def keyPressEvent(self, event):
 		""" Permet de soumettre le formulaire avec la touche entrée """
 		if event.key() == Qt.Key_Return and not (event.modifiers() & Qt.ShiftModifier):
-			self.parent.create_timer()
+			self.accept()
 		else:
 			super().keyPressEvent(event)
 	

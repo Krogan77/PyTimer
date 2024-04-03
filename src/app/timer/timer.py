@@ -69,6 +69,21 @@ class Timer:
 	##
 	
 	@property
+	def hours(self):
+		""" Attribut du temps en heures """
+		return format_duration(self._timeleft, _format=False)[0]
+	
+	@property
+	def minutes(self):
+		""" Attribut du temps en minutes """
+		return format_duration(self._timeleft, _format=False)[1]
+	
+	@property
+	def seconds(self):
+		""" Attribut du temps en secondes """
+		return format_duration(self._timeleft, _format=False)[2]
+	
+	@property
 	def timeleft(self):
 		""" Attribut du temps restant """
 		return format_duration(self._timeleft)
@@ -166,6 +181,7 @@ class Timer:
 	def set_timeleft(self, _format: bool = False):
 		""" Calcule le temps restant du timer
 		- Soustrais l'heure actuelle à la date de fin du timer pour obtenir le temps restant en timedelta.
+		- Déclenche la notification si le timer est terminée.
 		
 		Args:
 			- format (bool): Permet de formater le temps restant en heures, minutes et secondes.

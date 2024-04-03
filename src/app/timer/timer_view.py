@@ -9,6 +9,13 @@
 Description :
     Vue des timer
 
+Notes :
+	- Permet de gérer les timers
+
+Fonctionnalités :
+	- Création et modification des timers
+	- Affichage des timers
+
 Created :
     05:38  01/04/2024
 
@@ -16,7 +23,16 @@ Started :
     created.
 
 Last updated :
-	---
+	mercredi 3 avril 2024 10:47:49
+
+Todo:
+	> Sauvegarde des timers
+	  - Création d'un fichier de sauvegarde
+	  - Charger les timers existants lors de l'ouverture et les ajouter dans la liste
+	  - passer sur les timer de la liste lors de la fermeture pour les sauvegarder
+	  -
+	.
+	
 """
 
 from datetime import datetime
@@ -34,12 +50,17 @@ from app.timer.timer_widget import TimerWidget
 class TimerView(QWidget):
 	def __init__(self):
 		super().__init__()
-	
+		
+		self.set_variables()
 		self.setup_ui()
 		self.set_style()
 		self.setup_connections()
 		self.set_default_values()
-		
+	
+	def set_variables(self):
+		""" Définition des variables de la vue """
+		pass
+	
 	def setup_ui(self):
 		""" Création des éléments de l'interface """
 		
@@ -151,21 +172,30 @@ class TimerView(QWidget):
 		self.lst_timer.setItemWidget(self.item, self.timer_widget)
 		
 	
-	def create_timer(self, timer=None):
+	def create_timer(self, timer=None, widget=None):
 		""" Création d'un nouveau timer """
 		dbg("create timer = ", timer)
+		
+		# Mode création s'il n'y a pas de timer fourni
 		if not timer:
+			# Ouvre la fenêtre de création et récupère le timer si l'utilisateur a validé
 			dialog = TimerDialog(self)
 			if dialog.exec():
 				timer = dialog.get_timer()
+				
+				# Ajoute le timer à la liste
 				self.add_timer(timer)
+		
+		# Mode modification s'il y a un timer fourni
 		else:
 			dbg("modif timer = ", timer)
+			
+			# Ouvre la fenêtre de modification et récupère le timer si l'utilisateur a validé
 			dialog = TimerDialog(self, timer)
 			if dialog.exec():
 				timer = dialog.get_timer()
+				widget.reset_timer()
 				dbg("timer after modif = ", timer)
-				# todo pb: ne modifie pas encore le timer dans la liste
 	
 	def check_timer(self):
 		""" Passe sur les éléments de la liste pour mettre à jour les timers actifs """

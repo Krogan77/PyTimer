@@ -25,7 +25,7 @@ from utils import dbg
 
 class TimerWidget(QWidget):
 	submit_dates = Signal(datetime)
-	submit_timer = Signal(object)
+	submit_timer = Signal(object, object)
 	
 	def __init__(self, timer=None, parent=None):
 		super().__init__()
@@ -175,6 +175,8 @@ class TimerWidget(QWidget):
 	def reset_timer(self):
 		""" Réinitialise le timer """
 		self.timer.reset()
+		self.lb_title.setText(self.timer.title)
+		self.lb_duration.setText(self.timer.duration)
 		self.lb_timeleft.setText(str(self.timer.timeleft))
 		self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
 		self.lb_timeleft.setStyleSheet("color: white;")
@@ -182,7 +184,7 @@ class TimerWidget(QWidget):
 	
 	def modify_timer(self):
 		""" Envoi le signal pour la modification """
-		self.submit_timer.emit(self.timer)
+		self.submit_timer.emit(self.timer, self)
 	
 	def set_style_btn_start(self):
 		""" Modification du style du bouton start """

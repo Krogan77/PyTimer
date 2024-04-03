@@ -19,13 +19,13 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle('PyTimer')
 		self.setMinimumSize(390, 370)
 		
+		create_log_file()
+		
 		# Vérifie l'emplacement de l'application pour différencier les icônes
 		if check_work_path():
 			self.setWindowIcon(QIcon("lib/icons/icon_work.png"))
 		else:
 			self.setWindowIcon(QIcon("lib/icons/main_icon.png"))
-			
-		create_log_file()
 		
 		# Récupère la sauvegarde et configure les options
 		self.set_options()

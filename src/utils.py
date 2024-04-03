@@ -1,11 +1,14 @@
 
 """ Utils.py / Contient les fonctions utilitaires du projet. """
-from datetime import timedelta
-from pathlib import Path
-import os
-
 from plyer import notification
 from tinydb import TinyDB
+
+from datetime import timedelta
+from pathlib import Path
+import logging
+import os
+
+from settings import CONSOLE_DEBUG, LOG
 
 # Chemin du dossier du projet
 CUR_DIR = Path(__file__).resolve().parent.parent
@@ -113,7 +116,10 @@ def create_log_file():
 	""" Fonction permettant de créer un nouveau fichier de log lors de
 		l'ouverture de l'application pour séparer les suivis d'utilisations
 	"""
-	import logging
+	
+	# Empêche la création d'un fichier de log si cela n'est pas configurer
+	if not LOG:
+		return
 	
 	# Vérifie si le dossier de log existe
 	log_dir = Path(CUR_DIR / "log")
@@ -135,7 +141,7 @@ def create_log_file():
 
 def config_log(filepath, level, date: bool = False):
 	""" Configure le fichier de log """
-	import logging
+	
 	if date:
 		form = f"{"-" * 30}" + "\n%(asctime)s : %(levelname)s : \n%(message)s\n"
 	else:
@@ -154,10 +160,11 @@ def clamp(value: int | float, min_value: int | float, max_value: int | float) ->
 	return min(max(value, min_value), max_value)
 
 
-def format_duration(delta: int | float | timedelta) -> str:
+def format_duration(delta: int | float | timedelta, _format=True) -> str | tuple:
 	""" Formate la durée en heures, minutes et secondes
 	
 	:param delta: Durée en secondes
+	:param _format: Format de sortie
 	:return: Durée formatée en heures, minutes et secondes
 	"""
 	result = "-" if isinstance(delta, timedelta) and delta.total_seconds() < 0 else ""
@@ -168,6 +175,10 @@ def format_duration(delta: int | float | timedelta) -> str:
 	# Calcul des heures, minutes et secondes
 	hours, remainder = divmod(total_seconds, 3600)
 	minutes, seconds = divmod(remainder, 60)
+	
+	# Ajouter une logique pour permettre de renvoyer les heures, minutes et secondes
+	if not _format:
+		return hours, minutes, seconds
 	
 	# Conversion en string
 	_hours = f"{int(hours)}h"
@@ -204,8 +215,6 @@ def dbg(*args, sep=" ", end="\n"):
 	:param sep: Séparateur entre les arguments
 	:param end: Fin de ligne
 	"""
-	
-	from settings import CONSOLE_DEBUG, LOG
 	
 	# Affiche un message dans la console si le mode debug est activé
 	if CONSOLE_DEBUG:

@@ -15,4 +15,4 @@ CONSOLE_DEBUG = True
 
 # Niveau de debug du programme
 # - None : aucun debug
-LOG = logging.debug
+LOG = None
