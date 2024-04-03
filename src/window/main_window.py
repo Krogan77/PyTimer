@@ -17,7 +17,7 @@ class MainWindow(QMainWindow):
 		super().__init__()
 		
 		self.setWindowTitle('PyTimer')
-		self.setMinimumSize(390, 370)
+		self.setMinimumSize(450, 370)
 		
 		create_log_file()
 		

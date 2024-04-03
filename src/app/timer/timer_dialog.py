@@ -35,7 +35,7 @@ class TimerDialog(QDialog):
 		self.timer = timer
 		self.parent = parent
 		
-		self.setWindowTitle("Création de timer")
+		self.setWindowTitle("Création")
 		
 		self.create_variables()
 		self.setup_ui()
@@ -68,7 +68,7 @@ class TimerDialog(QDialog):
 		
 		# Line edit
 		self.le_name_timer = QLineEdit()
-		self.le_name_timer.setPlaceholderText("Nom du timer")
+		self.le_name_timer.setPlaceholderText("Nom du minuteur")
 		self.vlayout.addWidget(self.le_name_timer)
 		
 		# Compteur de caractères du text edit
@@ -109,32 +109,38 @@ class TimerDialog(QDialog):
 		self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 		self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
 		self.vlayout.addWidget(self.button_box)
-		
-		self.lb_result = QLabel("")
-		self.vlayout.addWidget(self.lb_result)
-		
 	##
 	
 	#
 	def set_style(self):
 		""" Modification du style """
-		self.vlayout.setContentsMargins(0, 0, 0, 0)
-		self.vlayout.setSpacing(0)
-		self.vlayout.addStretch(1)  # Ajoute un espace extensible à la fin du layout vertical
-		
-		self.hlayout.addStretch(1)
+		# self.vlayout.setContentsMargins(0, 0, 0, 0)
+		# self.vlayout.setSpacing(0)
+		# self.vlayout.addStretch(1)  # Ajoute un espace extensible à la fin du layout vertical
+		#
+		# self.hlayout.addStretch(1)
 		
 		self.lb_count_char_name.setAlignment(Qt.AlignRight)
 		self.lb_count_char_message.setAlignment(Qt.AlignRight)
 		
 		self.setStyleSheet(
 			"""
+				* {
+					font-size: 13px;
+				}
+				
 				QLineEdit {
 					border-radius: 5px;
 				}
 				
 				QTextEdit {
 					border-radius: 10px;
+				}
+				
+				QDialogButtonBox > QPushButton {
+					margin-right: 10px;
+					margin-top: 8px;
+					margin-bottom: 2px;
 				}
 				""")
 	##
@@ -164,7 +170,7 @@ class TimerDialog(QDialog):
 		""" Définition des valeurs par défaut """
 		if self.timer:
 			self.create_mode = False
-			self.setWindowTitle("Modification de timer")
+			self.setWindowTitle("Modification")
 			self.le_name_timer.setText(self.timer.title)
 			self.te_content_timer.setPlainText(self.timer.message)
 			self.spn_hours.setValue(self.timer.hours)
@@ -374,7 +380,7 @@ class TimerDialog(QDialog):
 	#
 	def accept(self):
 		""" Crée un timer avec les informations du formulaire et l'envoie
-		- Cela est fait lors de l'appui sur le bouton avec un formulaire valide
+			> lors de l'appui sur le bouton avec un formulaire valide
 		"""
 		
 		# Préparation des données à émettre

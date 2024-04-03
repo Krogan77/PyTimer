@@ -70,11 +70,12 @@ class TimerView(QWidget):
 		self.vlayout = QVBoxLayout()
 		self.hlayout.addLayout(self.vlayout)
 		
-		self.btn_new_timer = QPushButton("Nouveau Timer")
+		self.btn_new_timer = QPushButton("Nouveau")
+		self.btn_new_timer.setFixedWidth(150)
 		self.vlayout.addWidget(self.btn_new_timer)
 		
 		self.lst_timer = QListWidget()
-		self.lst_timer.setFixedWidth(350)
+		self.lst_timer.setMinimumWidth(400)
 		self.vlayout.addWidget(self.lst_timer)
 		
 		# Permet de repousser les éléments sur la gauche

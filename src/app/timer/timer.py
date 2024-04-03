@@ -93,19 +93,19 @@ class Timer:
 	@property
 	def end_date(self):
 		""" Attribut de la date de fin """
-		return self._end_date.strftime("%H:%M:%S") if self._end_date else None
+		return self._end_date.strftime("%H:%M:%S") if self._end_date else "---"
 	##
 	
 	#
 	def __str__(self):
 		""" Affichage des information """
-		display = f"Timer(\n\ttitle='{self.title}', " + "\n"
-		display += f"\tmessage='{self.message}', " + "\n"
-		display += f"\ttimer={self.timer}, " + "\n"
-		display += f"\tduration={self.duration}, " + "\n"
-		display += f"\ttimeleft={self._timeleft}, " + "\n"
-		display += f"\tend_date={self._end_date}, " + "\n"
-		display += f"\trunning={self.running}" + "\n)\n"
+		display = f"Timer(\n\ttitle='{self.title}', \n"
+		display += f"\tmessage='{self.message}', \n"
+		display += f"\ttimer={self.timer}, \n"
+		display += f"\tduration={self.duration}, \n"
+		display += f"\ttimeleft={self._timeleft}, \n"
+		display += f"\tend_date={self._end_date}, \n"
+		display += f"\trunning={self.running}\n)\n"
 		
 		return display
 	
@@ -135,10 +135,7 @@ class Timer:
 	
 	#
 	def start_timer(self):
-		""" Démarre le timer
-		- Vérifie que le timer n'est pas déjà en cours.
-		- Utilise les secondes restantes et la fonction new_date pour définir la date de fin du timer.
-		- Passer l'attribut running à True.
+		""" Démarrage du timer
 		"""
 		if self.end:
 			return
@@ -153,8 +150,6 @@ class Timer:
 		
 		# Passe l'attribut running à True
 		self.running = True
-		
-		return self._end_date
 	##
 	
 	#
@@ -167,7 +162,7 @@ class Timer:
 			- reset (bool): Permet de réinitialiser le timer à sa durée par défaut.
 		"""
 		
-		# Vérifie que le timer est actif
+		# Vérifie que le timer est bien actif
 		if not self.running:
 			return
 		
@@ -181,51 +176,39 @@ class Timer:
 	
 	#
 	def set_timeleft(self, _format: bool = False):
-		""" Calcule le temps restant du timer
-		- Soustrais l'heure actuelle à la date de fin du timer pour obtenir le temps restant en timedelta.
+		""" Calcule du temps restant du timer
 		- Déclenche la notification si le timer est terminée.
+		- renvoie le temps restant avec formatage si demandé pour l'affichage.
 		
 		Args:
-			- format (bool): Permet de formater le temps restant en heures, minutes et secondes.
+			- format (bool): Permet de renvoyer le temps restant formaté.
 		"""
 		
-		# Vérifie que le timer est actif
-		if not self.running:
-			# Si le formatage est demandée
-			if _format:
-				# Formate le temps restant
-				return self.timeleft
-			else:
-				# Retourne le timedelta
-				return self._timeleft
+		if self.running:
+			# Calcule le temps restant
+			self._timeleft = self._end_date - datetime.now()
+			
+			# Si le minuteur est terminée, déclenche la notification
+			if self._timeleft.total_seconds() < 0:
+				if not self.end:
+					send_notify(self.title, self.message)
+					self.end = True
 		
-		# Calcule le temps restant
-		self._timeleft = self._end_date - datetime.now()
-		
-		# Si le minuteur est terminée, déclenche la notification
-		if self._timeleft.total_seconds() < 0:
-			if not self.end:
-				send_notify(self.title, self.message)
-				self.end = True
-		
-		# Si le formatage est demandée
-		if _format:
-			# Formate le temps restant
-			return self.timeleft
-		else:
-			# Retourne le timedelta
-			return self._timeleft
+		# Retourne le temps restant avec formatage si demandé
+		return self.timeleft if _format else self._timeleft
 	##
 	
 	#
 	def reset(self):
-		""" Permet de reset le timer à sa durée par défaut """
-		# Stop le timer s'il est actif
+		""" Réinitialisation du timer """
+		
+		# Arrête le timer s'il est actif.
 		if self.running:
 			self.stop_timer()
 			
-		# reset des attributs
+		# Reset des attributs
 		self._timeleft = self.timer
+		self._end_date = None
 		self.end = False
 	##
 ##
@@ -292,7 +275,7 @@ if __name__ == '__main__':
 	
 	# Test de la création de date de fin
 	timer.start_timer()
-	dbg("Création de la date de fin : \n", timer, "\n")
+	dbg("Création de la date de fin :", timer, sep="\n")
 	
 	
 	# Test du calcul du temps restant

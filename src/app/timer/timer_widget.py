@@ -14,13 +14,13 @@ Created :
 Last updated :
 	mercredi 3 avril 2024 13:58:38
 """
-from datetime import datetime
-
 from PySide6.QtCore import QSize, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton
 
 from utils import dbg
+
+font_weight = "font-weight: 750;"
 
 
 class TimerWidget(QWidget):
@@ -36,6 +36,8 @@ class TimerWidget(QWidget):
 		self.setup_connections()
 		self.set_default_values()
 		
+	##
+		
 	def setup_ui(self):
 		""" Configuration de l'interface """
 		
@@ -44,8 +46,6 @@ class TimerWidget(QWidget):
 		
 		self.btn_play = QPushButton()
 		self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
-		self.btn_play.setIconSize(QSize(20, 20))
-		self.btn_play.setFixedSize(QSize(30, 30))
 		self.hlayout.addWidget(self.btn_play)
 		
 		self.vlayout = QVBoxLayout()
@@ -63,19 +63,15 @@ class TimerWidget(QWidget):
 		self.lb_timeleft = QLabel(str(self.timer.timeleft))
 		self.vlayout_time.addWidget(self.lb_timeleft)
 		
-		self.lb_end_date = QLabel(str(self.timer._end_date))
+		self.lb_end_date = QLabel(str(self.timer.end_date))
 		self.vlayout_time.addWidget(self.lb_end_date)
 		
 		self.btn_reset = QPushButton()
 		self.btn_reset.setIcon(QIcon("lib/icons/icon_reset"))
-		self.btn_reset.setIconSize(QSize(20, 20))
-		self.btn_reset.setFixedSize(QSize(30, 30))
 		self.hlayout.addWidget(self.btn_reset)
 		
 		self.btn_modify = QPushButton()
 		self.btn_modify.setIcon(QIcon("lib/icons/icon_modify"))
-		self.btn_modify.setIconSize(QSize(20, 20))
-		self.btn_modify.setFixedSize(QSize(30, 30))
 		self.hlayout.addWidget(self.btn_modify)
 	
 	#
@@ -89,17 +85,39 @@ class TimerWidget(QWidget):
 				margin: 0px;
 			}
 			
+			QLabel {
+				text-align: center;
+				font-size: 13px;
+				margin-left: 8px;
+			}
+			
 			QPushButton {
 				border: none;
-				border-radius: 5px;
-				min-width: 20px;
-				min-height: 20px;
-				padding: 5px;
-				margin-bottom: 10px;
-				margin-right: 3px;
+				border-radius: 10px;
+				min-width: 0px;
+				min-height: 0px;
+				padding: 10px;
+				margin-bottom: 3px;
+				margin-right: 5px;
 				margin-left: 3px;
 			}
 			""")
+		
+		self.lb_title.setStyleSheet(f"QLabel {{{font_weight}}}")
+		self.lb_timeleft.setStyleSheet(f"QLabel {{{font_weight}}}")
+		
+		# Modification de la taille des boutons
+		icon_size = 24
+		button_size = 38
+		
+		self.btn_play.setIconSize(QSize(icon_size, icon_size))
+		self.btn_play.setFixedSize(QSize(button_size, button_size))
+		
+		self.btn_reset.setIconSize(QSize(icon_size, icon_size))
+		self.btn_reset.setFixedSize(QSize(button_size, button_size))
+		
+		self.btn_modify.setIconSize(QSize(icon_size, icon_size))
+		self.btn_modify.setFixedSize(QSize(button_size, button_size))
 	
 	#
 	def setup_connections(self):
@@ -146,7 +164,7 @@ class TimerWidget(QWidget):
 		self.lb_end_date.setText(str(self.timer.end_date))
 		
 		self.set_style_btn_start()
-		self.lb_timeleft.setStyleSheet("color: green;")
+		self.lb_timeleft.setStyleSheet(f"QLabel {{color: green;{font_weight}}}")
 		
 		# todo Démarrage des timers:
 		#  vérifier si le timer est actif, modifier le bouton reset en conséquence
@@ -167,7 +185,7 @@ class TimerWidget(QWidget):
 			# seulement sur les timers actifs
 			# et une seule fois lorsque le check n'a pas encore été fait
 			if self.timer.end and not self.check_color:
-				self.lb_timeleft.setStyleSheet("QLabel {color: red;}")
+				self.lb_timeleft.setStyleSheet(f"QLabel {{color: red;{font_weight}}}")
 				self.check_color = True
 	
 	def reset_timer(self, modify=False):
@@ -183,12 +201,18 @@ class TimerWidget(QWidget):
 				self.lb_title.setText(self.timer.title)
 				return
 		
+		# Réinitialise le timer
 		self.timer.reset()
-		self.lb_title.setText(self.timer.title)
+		
+		# Réinitialise les valeurs
+		self.lb_title.setText(self.timer.title)  # titre
 		self.lb_duration.setText(self.timer.duration)  # durée par défaut
 		self.lb_timeleft.setText(str(self.timer.timeleft))  # durée restante avec millisec
+		self.lb_end_date.setText(str(self.timer.end_date))  # Date de fin
+		
+		# Modifie le style
 		self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
-		self.lb_timeleft.setStyleSheet("color: white;")
+		self.lb_timeleft.setStyleSheet(f"QLabel {{color: white;{font_weight}}}")
 		self.check_color = False
 	
 	def modify_timer(self):
