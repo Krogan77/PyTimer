@@ -333,13 +333,7 @@ class TimerDialog(QDialog):
 		if not len(text) < MAX_CHAR_MESSAGE + 1:
 			check = False
 		
-		# Check spinbox
-		s = self.spn_seconds.value()
-		m = self.spn_minutes.value()
-		h = self.spn_hours.value()
-		
-		# Vérifie si au moins un spinbox possède une valeur
-		if not s and not m and not h:
+		if not self.check_value_spn():
 			check = False
 		
 		# Si aucune vérification n'a echouer
@@ -348,6 +342,16 @@ class TimerDialog(QDialog):
 			self.button_box.button(QDialogButtonBox.Ok).setEnabled(True)
 		else:
 			self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
+	
+	def check_value_spn(self):
+		# Check spinbox
+		s = self.spn_seconds.value()
+		m = self.spn_minutes.value()
+		h = self.spn_hours.value()
+		# Vérifie si au moins un spinbox possède une valeur
+		if not s and not m and not h:
+			return False
+		return True
 	
 	##
 	
@@ -387,7 +391,6 @@ class TimerDialog(QDialog):
 	
 	def get_timer(self):
 		""" Renvoie le timer créé """
-		dbg(self.timer)  # todo print
 		return self.timer
 	
 	##
@@ -396,7 +399,9 @@ class TimerDialog(QDialog):
 	def keyPressEvent(self, event):
 		""" Permet de soumettre le formulaire avec la touche entrée """
 		if event.key() == Qt.Key_Return and not (event.modifiers() & Qt.ShiftModifier):
-			self.accept()
+			# Empêche de valider un timer non valide,
+			# car impossible de faire des vérifications avant ça ne fonctionne pas
+			self.reject()
 		else:
 			super().keyPressEvent(event)
 	

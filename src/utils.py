@@ -178,6 +178,7 @@ def format_duration(delta: int | float | timedelta, _format=True) -> str | tuple
 	
 	# Ajouter une logique pour permettre de renvoyer les heures, minutes et secondes
 	if not _format:
+		print(hours, minutes, seconds)
 		return hours, minutes, seconds
 	
 	# Conversion en string

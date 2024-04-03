@@ -172,12 +172,23 @@ class TimerWidget(QWidget):
 				self.lb_timeleft.setStyleSheet("QLabel {color: red;}")
 				self.check_color = True
 	
-	def reset_timer(self):
-		""" Réinitialise le timer """
+	def reset_timer(self, modify=False):
+		""" Réinitialise le timer
+		
+		- Si le timer est reset après modification, on vérifie si la durée par défaut à été modifiée
+		  avant de réinitialiser la durée restante.
+		  Si la durée par défaut à été modifiée, on doit absolument modifier la durée restante.
+		  Si elle n'a pas été modifiée, on ne doit pas stopper le timer.
+		"""
+		if modify:
+			if self.lb_duration.text() == self.timer.duration:
+				self.lb_title.setText(self.timer.title)
+				return
+		
 		self.timer.reset()
 		self.lb_title.setText(self.timer.title)
-		self.lb_duration.setText(self.timer.duration)
-		self.lb_timeleft.setText(str(self.timer.timeleft))
+		self.lb_duration.setText(self.timer.duration)  # durée par défaut
+		self.lb_timeleft.setText(str(self.timer.timeleft))  # durée restante avec millisec
 		self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
 		self.lb_timeleft.setStyleSheet("color: white;")
 		self.check_color = False

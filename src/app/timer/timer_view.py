@@ -194,7 +194,7 @@ class TimerView(QWidget):
 			dialog = TimerDialog(self, timer)
 			if dialog.exec():
 				timer = dialog.get_timer()
-				widget.reset_timer()
+				widget.reset_timer(modify=True)
 				dbg("timer after modif = ", timer)
 	
 	def check_timer(self):

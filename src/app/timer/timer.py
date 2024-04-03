@@ -71,17 +71,17 @@ class Timer:
 	@property
 	def hours(self):
 		""" Attribut du temps en heures """
-		return format_duration(self._timeleft, _format=False)[0]
+		return format_duration(self.timer, _format=False)[0]
 	
 	@property
 	def minutes(self):
 		""" Attribut du temps en minutes """
-		return format_duration(self._timeleft, _format=False)[1]
+		return format_duration(self.timer, _format=False)[1]
 	
 	@property
 	def seconds(self):
 		""" Attribut du temps en secondes """
-		return format_duration(self._timeleft, _format=False)[2]
+		return format_duration(self.timer, _format=False)[2]
 	
 	@property
 	def timeleft(self):
