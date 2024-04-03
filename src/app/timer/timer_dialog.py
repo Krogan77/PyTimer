@@ -140,7 +140,6 @@ class TimerDialog(QDialog):
 	def setup_connections(self):
 		""" Création des connecions entre les widgets """
 		self.le_name_timer.textChanged.connect(lambda: self.count_char("name"))
-		self.le_name_timer.returnPressed.connect(self.accept)
 		
 		self.te_content_timer.textChanged.connect(lambda: self.count_char("message"))
 		
@@ -167,20 +166,20 @@ class TimerDialog(QDialog):
 			self.spn_hours.setValue(self.timer.hours)
 			self.spn_minutes.setValue(self.timer.minutes)
 			self.spn_seconds.setValue(self.timer.seconds)
-		
 	##
 	
 	#
-	def count_char(self, field: str):
+	def count_char(self, field: str, check=False):
 		"""
 		Calcule le nombre de caractères restants dans les champs
 			> Lorsqu'ils sont modifiée.
 
 		- Vérifie si le nombre de caractères dans les champs est correct.
-		- Modification du texte et de sa couleur en fonction dela validité des champs.
+		- Modification du texte et de sa couleur en fonction de la validité des champs.
 
 		Args:
 			field (str): Champ de texte qui doit être modifié.
+			check (bool): Si la fonction doit juste renvoyer l'info ou modifier les labels.
 		"""
 		
 		chars_left = 0  # Nombre de caractère restants
@@ -210,8 +209,12 @@ class TimerDialog(QDialog):
 		
 		# Active le bouton si le nombre de caractères est correct.
 		if -1 < chars_left < max_char:
+			if check:
+				return True
 			self.modify_label_chars(True, field, text)
 		else:
+			if check:
+				return False
 			self.modify_label_chars(False, field, text)
 	
 	##
@@ -369,6 +372,7 @@ class TimerDialog(QDialog):
 		""" Crée un timer avec les informations du formulaire et l'envoie
 		- Cela est fait lors de l'appui sur le bouton avec un formulaire valide
 		"""
+		print("accept")
 		
 		# Préparation des données à émettre
 		title = self.le_name_timer.text()
@@ -398,9 +402,8 @@ class TimerDialog(QDialog):
 	def keyPressEvent(self, event):
 		""" Permet de soumettre le formulaire avec la touche entrée """
 		if event.key() == Qt.Key_Return and not (event.modifiers() & Qt.ShiftModifier):
-			# Empêche de valider un timer non valide,
-			# car impossible de faire des vérifications avant ça ne fonctionne pas
-			self.reject()
+			if self.check_value_spn() and self.count_char("name", check=True):
+				self.accept()
 		else:
 			super().keyPressEvent(event)
 	
