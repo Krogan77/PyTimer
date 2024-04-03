@@ -23,7 +23,7 @@ Started :
     created.
 
 Last updated :
-	mercredi 3 avril 2024 10:47:49
+	mercredi 3 avril 2024 13:58:47
 
 Todo:
 	> Sauvegarde des timers
@@ -41,7 +41,7 @@ from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton
 
 from app.timer.timer_dialog import TimerDialog
-from utils import send_notify, dbg
+from app.timer.timer import Timer, send_notify
 
 from app.timer.dates import new_dates
 from app.timer.timer_widget import TimerWidget
@@ -174,7 +174,6 @@ class TimerView(QWidget):
 	
 	def create_timer(self, timer=None, widget=None):
 		""" Création d'un nouveau timer """
-		dbg("create timer = ", timer)
 		
 		# Mode création s'il n'y a pas de timer fourni
 		if not timer:
@@ -188,14 +187,15 @@ class TimerView(QWidget):
 		
 		# Mode modification s'il y a un timer fourni
 		else:
-			dbg("modif timer = ", timer)
-			
 			# Ouvre la fenêtre de modification et récupère le timer si l'utilisateur a validé
 			dialog = TimerDialog(self, timer)
 			if dialog.exec():
+				# Modifie le timer existant, on a l'impression qu'il n'est pas utilisé,
+				# mais il point bien vers le timer de la liste
 				timer = dialog.get_timer()
+				
+				# Reset le timer pour mettre à jour les valeurs
 				widget.reset_timer(modify=True)
-				dbg("timer after modif = ", timer)
 	
 	def check_timer(self):
 		""" Passe sur les éléments de la liste pour mettre à jour les timers actifs """

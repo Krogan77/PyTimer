@@ -12,7 +12,7 @@ Created :
     18:45  31/03/2024
 
 Last updated :
-	---
+	mercredi 3 avril 2024 13:58:38
 """
 from datetime import datetime
 
@@ -144,7 +144,6 @@ class TimerWidget(QWidget):
 			return
 		
 		self.timer.start_timer()
-		dbg(self.timer._end_date)
 		self.lb_end_date.setText(str(self.timer.end_date))
 		
 		self.set_style_btn_start()

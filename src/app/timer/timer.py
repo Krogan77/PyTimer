@@ -16,7 +16,7 @@ Started :
     lundi 1 avril 2024 05:29:12
 
 Last updated :
-	lundi 1 avril 2024 12:28:20
+	mercredi 3 avril 2024 13:58:27
 """
 
 
@@ -25,9 +25,11 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Optional
 
+from plyer import notification
+
 from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE
 from app.timer.dates import new_date
-from utils import format_duration, send_notify, dbg
+from utils import dbg
 
 
 @dataclass
@@ -218,11 +220,63 @@ class Timer:
 	#
 	def reset(self):
 		""" Permet de reset le timer à sa durée par défaut """
+		# Stop le timer s'il est actif
 		if self.running:
 			self.stop_timer()
+			
+		# reset des attributs
 		self._timeleft = self.timer
 		self.end = False
 	##
+##
+
+
+#
+def format_duration(delta: int | float | timedelta, _format=True) -> str | tuple:
+	""" Formate la durée en heures, minutes et secondes
+
+	:param delta: Durée en secondes
+	:param _format: Format de sortie
+	:return: Durée formatée en heures, minutes et secondes
+	"""
+	result = "-" if isinstance(delta, timedelta) and delta.total_seconds() < 0 else ""
+	
+	# Prendre la valeur absolue de la durée en secondes
+	total_seconds = abs(delta.total_seconds()) if isinstance(delta, timedelta) else abs(delta)
+	
+	# Calcul des heures, minutes et secondes
+	hours, remainder = divmod(total_seconds, 3600)
+	minutes, seconds = divmod(remainder, 60)
+	
+	# Ajouter une logique pour permettre de renvoyer les heures, minutes et secondes
+	if not _format:
+		return hours, minutes, seconds
+	
+	# Conversion en string
+	_hours = f"{int(hours)}h"
+	_minutes = f"{int(minutes)}m"
+	_seconds = f"{seconds:02}s" if isinstance(seconds, int) else f"{seconds:.2f}s"
+	
+	# Concaténation excluant les valeurs nulles
+	if hours:
+		result += f"{_hours} {_minutes} {_seconds}"
+	elif minutes:
+		result += f"{_minutes} {_seconds}"
+	else:
+		result += f"{_seconds}"
+	
+	return result
+##
+
+
+#
+def send_notify(title, message):
+	""" Déclenche une notification """
+	notification.notify(
+		title=title,
+		message=message,
+		app_name="PyTimer",
+	)
 
 
 #
@@ -275,4 +329,4 @@ if __name__ == '__main__':
 	
 	#
 	pass
-		
+	

@@ -1,9 +1,7 @@
 
 """ Utils.py / Contient les fonctions utilitaires du projet. """
-from plyer import notification
 from tinydb import TinyDB
 
-from datetime import timedelta
 from pathlib import Path
 import logging
 import os
@@ -37,6 +35,7 @@ def check_work_path():
 	
 	return cur_dir_normalized == expected_path_normalized
 ##
+
 
 def get_db():
 	""" Récupère la base de données. """
@@ -158,52 +157,6 @@ def config_log(filepath, level, date: bool = False):
 
 def clamp(value: int | float, min_value: int | float, max_value: int | float) -> int | float:
 	return min(max(value, min_value), max_value)
-
-
-def format_duration(delta: int | float | timedelta, _format=True) -> str | tuple:
-	""" Formate la durée en heures, minutes et secondes
-	
-	:param delta: Durée en secondes
-	:param _format: Format de sortie
-	:return: Durée formatée en heures, minutes et secondes
-	"""
-	result = "-" if isinstance(delta, timedelta) and delta.total_seconds() < 0 else ""
-	
-	# Prendre la valeur absolue de la durée en secondes
-	total_seconds = abs(delta.total_seconds()) if isinstance(delta, timedelta) else abs(delta)
-	
-	# Calcul des heures, minutes et secondes
-	hours, remainder = divmod(total_seconds, 3600)
-	minutes, seconds = divmod(remainder, 60)
-	
-	# Ajouter une logique pour permettre de renvoyer les heures, minutes et secondes
-	if not _format:
-		print(hours, minutes, seconds)
-		return hours, minutes, seconds
-	
-	# Conversion en string
-	_hours = f"{int(hours)}h"
-	_minutes = f"{int(minutes)}m"
-	_seconds = f"{seconds:02}s" if isinstance(seconds, int) else f"{seconds:.2f}s"
-		
-	# Concaténation excluant les valeurs nulles
-	if hours:
-		result += f"{_hours} {_minutes} {_seconds}"
-	elif minutes:
-		result += f"{_minutes} {_seconds}"
-	else:
-		result += f"{_seconds}"
-	
-	return result
-
-
-def send_notify(title, message):
-	""" Déclenche une notification """
-	notification.notify(
-		title=title,
-		message=message,
-		app_name="PyTimer",
-	)
 
 
 def dbg(*args, sep=" ", end="\n"):

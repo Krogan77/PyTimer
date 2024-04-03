@@ -32,7 +32,6 @@ class TimerDialog(QDialog):
 		super().__init__(parent)
 		
 		self.timer = timer
-		dbg("timerdialog timer = ", self.timer)  # todo print
 		self.parent = parent
 		
 		self.create_variables()

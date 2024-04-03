@@ -9,8 +9,6 @@ from PySide6.QtWidgets import QDialog, QComboBox, QVBoxLayout, QLabel, QPushButt
 
 from utils import set_stylesheet, base_config
 
-debug_on = True
-
 
 class OptionDialog(QDialog):
 	""" Fenêtre de configuration de l'application """
@@ -85,8 +83,6 @@ class OptionDialog(QDialog):
 		""" Réinitialise la position de la fenêtre """
 		# Doit redonner à la fenêtre et à la config les positions trouvées dans la config de base
 		self.main_window.setGeometry(base_config["geox"], base_config["geoy"], base_config["geow"], base_config["geoh"])
-		
-		print("Position reseted", debug_on)
 	
 	def set_style(self):
 		""" Applique le style sélectionné """
@@ -97,10 +93,6 @@ class OptionDialog(QDialog):
 			return
 		self.main_window.config['style'] = style
 		set_stylesheet(self.main_window, f"lib/style/{style}.qss")
-	
-	def closeEvent(self, arg__1):
-		""" Ferme la fenêtre et sauvegarde la config """
-		print("\n  🔧 Option closed\n", debug_on)
 
 #
 
