@@ -7,13 +7,9 @@
 
 Description :
     Permet d'afficher un timer.
-
-Created :
-    18:45  31/03/2024
-
-Last updated :
-	mercredi 3 avril 2024 13:58:38
+    
 """
+
 from PySide6.QtCore import QSize, Signal
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton

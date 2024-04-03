@@ -15,25 +15,16 @@ Notes :
 Fonctionnalités :
 	- Création et modification des timers
 	- Affichage des timers
-
-Created :
-    05:38  01/04/2024
-
-Started :
-    created.
-
-Last updated :
-	mercredi 3 avril 2024 13:58:47
-
-Todo:
-	> Sauvegarde des timers
-	  - Création d'un fichier de sauvegardeet d'une liste
-	  - Charger les timers existants lors de l'ouverture et les ajouter dans la liste
-	  - passer sur les timer de la liste lors de la fermeture pour les sauvegarder
-	  -
-	.
 	
 """
+
+# Todo:
+#    > Sauvegarde des timers
+#     - Création d'un fichier de sauvegardeet d'une liste
+#     - Charger les timers existants lors de l'ouverture et les ajouter dans la liste
+#     - passer sur les timer de la liste lors de la fermeture pour les sauvegarder
+#     -
+#    .
 
 from datetime import datetime
 
@@ -48,6 +39,7 @@ from app.timer.timer_widget import TimerWidget
 
 
 class TimerView(QWidget):
+	""" Gestion de la vue des timers """
 	def __init__(self):
 		super().__init__()
 		

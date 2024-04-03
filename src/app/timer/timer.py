@@ -9,14 +9,6 @@
 Description :
     Classe représentant un minuteur, capable d'être mis en pause et réinitialisé
 
-Created :
-    dimanche 31 mars 2024
-
-Started :
-    lundi 1 avril 2024 05:29:12
-
-Last updated :
-	mercredi 3 avril 2024 13:58:27
 """
 
 
@@ -283,8 +275,10 @@ if __name__ == '__main__':
 	for i in range(15):
 		# # On attend quelque seconde avec time.sleep(5)
 		time.sleep(1)
+		
 		# On met à jour le temps restant
 		timer.set_timeleft()
+		
 		# On affiche le temps restant
 		dbg("Test du calcul du temps restant : \n", timer._timeleft, "\n")
 	

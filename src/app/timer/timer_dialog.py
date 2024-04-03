@@ -7,14 +7,6 @@
 Description :
     Permet la création et la modification d'un mminuteur
 
-Created :
-    16:50  02/04/2024
-
-Started :
-    ---
-
-Last updated :
-	---
 """
 
 # Imports :

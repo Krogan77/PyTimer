@@ -1,5 +1,6 @@
 
 """ Utils.py / Contient les fonctions utilitaires du projet. """
+
 from tinydb import TinyDB
 
 from pathlib import Path
