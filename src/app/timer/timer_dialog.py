@@ -27,9 +27,13 @@ class TimerDialog(QDialog):
 		self.timer = timer
 		self.parent = parent
 		
-		self.setWindowTitle("Création")
+		# Set le titre de la fenêtre avec le mode qui
+		# sera vérifié plus tard pour savoir si on doit renvoyer le timer fourni
+		self.window_title = "Création"
+		self.setWindowTitle(self.window_title)
 		
-		self.create_variables()
+		# Création des éléments de l'interface
+		# self.create_variables()
 		self.setup_ui()
 		self.set_style()
 		self.setup_connections()
@@ -39,7 +43,6 @@ class TimerDialog(QDialog):
 	#
 	def create_variables(self):
 		""" Définition des variables """
-		self.create_mode = True  # Mode de la fenêtre, création ou modification
 		pass
 	##
 	
@@ -98,6 +101,7 @@ class TimerDialog(QDialog):
 		self.spn_seconds.setSingleStep(5)
 		self.hlayout_spn.addWidget(self.spn_seconds)
 		
+		# Boite de bouton de validation
 		self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 		self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
 		self.vlayout.addWidget(self.button_box)
@@ -106,12 +110,8 @@ class TimerDialog(QDialog):
 	#
 	def set_style(self):
 		""" Modification du style """
-		# self.vlayout.setContentsMargins(0, 0, 0, 0)
-		# self.vlayout.setSpacing(0)
-		# self.vlayout.addStretch(1)  # Ajoute un espace extensible à la fin du layout vertical
-		#
-		# self.hlayout.addStretch(1)
 		
+		# Aligne les labels sur la droite
 		self.lb_count_char_name.setAlignment(Qt.AlignRight)
 		self.lb_count_char_message.setAlignment(Qt.AlignRight)
 		
@@ -140,6 +140,7 @@ class TimerDialog(QDialog):
 	#
 	def setup_connections(self):
 		""" Création des connecions entre les widgets """
+		
 		self.le_name_timer.textChanged.connect(lambda: self.count_char("name"))
 		
 		self.te_content_timer.textChanged.connect(lambda: self.count_char("message"))
@@ -160,9 +161,15 @@ class TimerDialog(QDialog):
 	#
 	def set_default_values(self):
 		""" Définition des valeurs par défaut """
+		
+		# Si un timer est fourni
 		if self.timer:
-			self.create_mode = False
+			
+			# Change le mode de la fenêtre pour savoir ensuite
+			# que l'on doit renvoyer le même timer
 			self.setWindowTitle("Modification")
+			
+			# Ajoute les informations du timer dans les champs
 			self.le_name_timer.setText(self.timer.title)
 			self.te_content_timer.setPlainText(self.timer.message)
 			self.spn_hours.setValue(self.timer.hours)
@@ -171,17 +178,17 @@ class TimerDialog(QDialog):
 	##
 	
 	#
-	def count_char(self, field: str, check=False):
+	def count_char(self, field: str):
 		"""
 		Calcule le nombre de caractères restants dans les champs
 			> Lorsqu'ils sont modifiée.
 
 		- Vérifie si le nombre de caractères dans les champs est correct.
-		- Modification du texte et de sa couleur en fonction de la validité des champs.
+		- Modification du texte et de sa couleur en fonction de la validité
+			des champs à l'aide d'une fonction complémentaire.
 
 		Args:
 			field (str): Champ de texte qui doit être modifié.
-			check (bool): Si la fonction doit juste renvoyer l'info ou modifier les labels.
 		"""
 		
 		chars_left = 0  # Nombre de caractère restants
@@ -211,12 +218,8 @@ class TimerDialog(QDialog):
 		
 		# Active le bouton si le nombre de caractères est correct.
 		if -1 < chars_left < max_char:
-			if check:
-				return True
 			self.modify_label_chars(True, field, text)
 		else:
-			if check:
-				return False
 			self.modify_label_chars(False, field, text)
 	
 	##
@@ -224,27 +227,35 @@ class TimerDialog(QDialog):
 	#
 	def modify_label_chars(self, active: bool, field: str, text: str = ""):
 		"""
-		Permet de modifier les labels d'informations
+		Permet de modifier les labels d'informations et d'activer le bouton de validation si les champs sont valides.
 			> Lorsqu'un champ de texte est modifié.
 
 		- Modifie le texte et la couleur du label en fonction de la validité du champ associé.
 		- Active le bouton de validation du formulaire si les champs sont valides.
 
 		Args:
-			active (bool): Si le champ est valide ou non.
-			field (str): Champ de texte qui doit être modifié.
-			text (str): Texte à afficher dans le label, contient le nombre de caractères restants.
+			- active (bool): Si le champ est valide ou non.
+			- field (str): Champ de texte qui doit être modifié.
+			- text (str): Texte à afficher dans le label, contient le nombre de caractères restants.
 		"""
 		
+		# Champ message de notification
 		if field == "message":
+			
+			# Modifie le texte du label avec le nombre de caractères restants
 			self.lb_count_char_message.setText(text)
+			
+			# Si le champ est valide,
 			if active:
+				# active le bouton et change la couleur du texte en vert
 				self.activate_btn()
 				self.lb_count_char_message.setStyleSheet("QLabel {color: #00a151;}")
 			else:
+				# Sinon, désactive le bouton et change la couleur du texte en rouge
 				self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
 				self.lb_count_char_message.setStyleSheet("QLabel {color: #c5130d;}")
 		
+		# Logique identique à celle du champ message
 		elif field == "name":
 			self.lb_count_char_name.setText(text)
 			if active:
@@ -255,9 +266,13 @@ class TimerDialog(QDialog):
 				self.lb_count_char_name.setStyleSheet("QLabel {color: #c5130d;}")
 	
 	def check_spinbox_seconds(self):
-		""" Vérifie que le spinbox des secondes ne sorte pas de son pas de cinq """
+		""" Vérifie la valeur du spinbox des secondes et la modifie si elle est incorrecte
+			> Lorsque le spinbox des secondes est modifié.
 		
-		# Récupère la valeur du spinbox sous forme de str.
+			- Force le dernier chiffre à être un multiple de 5.
+		"""
+		
+		# Récupère la valeur du spinbox
 		value = str(self.spn_seconds.value())
 		
 		# Sépare les nombres de la valeur
@@ -266,22 +281,22 @@ class TimerDialog(QDialog):
 		
 		if end_value not in "05 ":
 			
-			# Modifie le dernier chiffre de la valeur
+			# Modifie le dernier chiffre pour qu'il soit un multiple de 5.
 			if end_value in "1289":
 				end_value = "0"
 			else:
 				end_value = "5"
 			
-			# Modifie la valeur du spin box
+			# Modification du spin box
 			self.spn_seconds.setValue(int(start_value + end_value))
 	
 	def check_spinbox(self, spinbox: str):
 		"""
-		Vérification principale sur les spinbox
+		Vérification principale sur les spinbox afin d'activer le bouton de validation du formulaire.
 			> Lorsqu'un spin box est modifié.
 
-		- Réinitialisation à zéro s'ils atteignent leur maximum et augmentation des autres spinbox
-		- Activation du bouton de validation du formulaire
+		- Réinitialisation à zéro s'ils atteignent leur maximum et augmentation des autres spinbox.
+		- Activation du bouton si les champs sont valides.
 
 		Args:
 			spinbox (str): Spinbox qui doit être vérifié.
@@ -311,8 +326,8 @@ class TimerDialog(QDialog):
 				self.spn_hours.setValue(hours)
 				self.spn_minutes.setValue(0)
 		
+		# Sans augmenter les autres spinbox pour celui la
 		elif spinbox == "hours":
-			# Pas d'augmentation du voisin ici
 			value = self.spn_hours.value()
 			if value == 24:
 				self.spn_hours.setValue(0)
@@ -336,8 +351,14 @@ class TimerDialog(QDialog):
 		text = self.te_content_timer.toPlainText()
 		if not len(text) < MAX_CHAR_MESSAGE + 1:
 			check = False
+			
+		# Check spinbox
+		s = self.spn_seconds.value()
+		m = self.spn_minutes.value()
+		h = self.spn_hours.value()
 		
-		if not self.check_value_spn():
+		# Vérifie si au moins un spinbox possède une valeur
+		if not s and not m and not h:
 			check = False
 		
 		# Si aucune vérification n'a echouer
@@ -347,46 +368,39 @@ class TimerDialog(QDialog):
 		else:
 			self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
 	
-	def check_value_spn(self):
-		# Check spinbox
-		s = self.spn_seconds.value()
-		m = self.spn_minutes.value()
-		h = self.spn_hours.value()
-		# Vérifie si au moins un spinbox possède une valeur
-		if not s and not m and not h:
-			return False
-		return True
-	
-	##
-	
 	@property
 	def duration(self):
 		""" Récupère les valeurs des spin box et constuit une durée en secondes """
 		s = self.spn_seconds.value()
 		m = self.spn_minutes.value()
 		h = self.spn_hours.value()
-		
 		return timedelta(hours=h, minutes=m, seconds=s).seconds
 	##
 	
 	#
 	def accept(self):
-		""" Crée un timer avec les informations du formulaire et l'envoie
-			> lors de l'appui sur le bouton avec un formulaire valide
+		""" Crée un timer avec les informations du formulaire et l'envoie.
+			> lors de l'appui sur le bouton et après vérification du formulaire.
 		"""
 		
-		# Préparation des données à émettre
+		# Récupération des informations du formulaire
 		title = self.le_name_timer.text()
 		message = self.te_content_timer.toPlainText()
 		duration = self.duration
 		
-		if self.create_mode:
+		# Si la fenêtre est en mode de création
+		if self.windowTitle() == "Création":
+			# On crée un timer avec les informations récupérées
 			self.timer = Timer(title, message, duration)
+		
+		# Si la fenêtre est en mode de modification
 		else:
+			# On modifie le timer fourni
 			self.timer.title = title
 			self.timer.message = message
 			self.timer.timer = self.duration
-			
+		
+		# Accepte le formulaire et le ferme
 		super().accept()
 	
 	def reject(self):
@@ -394,7 +408,7 @@ class TimerDialog(QDialog):
 		super().reject()
 	
 	def get_timer(self):
-		""" Renvoie le timer créé """
+		""" Fonction permettant de récupérer le timer après la fermeture du formulaire """
 		return self.timer
 	##
 	
@@ -402,7 +416,8 @@ class TimerDialog(QDialog):
 	def keyPressEvent(self, event):
 		""" Permet de soumettre le formulaire avec la touche entrée """
 		if event.key() == Qt.Key_Return and not (event.modifiers() & Qt.ShiftModifier):
-			if self.check_value_spn() and self.count_char("name", check=True):
+			# Vérifie si le bouton est activé avant de soumettre le formulaire
+			if self.button_box.button(QDialogButtonBox.Ok).isEnabled():
 				self.accept()
 		else:
 			super().keyPressEvent(event)

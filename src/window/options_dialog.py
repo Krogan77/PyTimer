@@ -1,4 +1,7 @@
-""" Fenêtre de configuration de l'application """
+# -*- coding: utf-8 -*-
+# Permet d'utiliser les accents dans le code
+
+""" Fenêtre d'options de l'application """
 
 # ----  IMPORTS  ---- #
 

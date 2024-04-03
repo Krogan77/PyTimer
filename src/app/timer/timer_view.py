@@ -18,13 +18,16 @@ Fonctionnalités :
 	
 """
 
+# Todo Doc.
+#
+
 # Todo:
-#    > Sauvegarde des timers
-#     - Création d'un fichier de sauvegardeet d'une liste
-#     - Charger les timers existants lors de l'ouverture et les ajouter dans la liste
-#     - passer sur les timer de la liste lors de la fermeture pour les sauvegarder
-#     -
-#    .
+#       > Sauvegarde des timers
+#       - Création d'un fichier de sauvegardeet d'une liste
+#       - Charger les timers existants lors de l'ouverture et les ajouter dans la liste
+#       - passer sur les timer de la liste lors de la fermeture pour les sauvegarder
+#       -
+#       .
 
 from datetime import datetime
 

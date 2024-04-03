@@ -3,12 +3,9 @@
 # Permet d'utiliser les accents dans le code
 
 """
-
     $ -- Timer -- $
 
-Description :
-    Classe représentant un minuteur, capable d'être mis en pause et réinitialisé
-
+Classe représentant un minuteur.
 """
 
 
@@ -90,7 +87,7 @@ class Timer:
 	
 	#
 	def __str__(self):
-		""" Affichage des information """
+		""" Affichage des informationde l'objet """
 		display = f"Timer(\n\ttitle='{self.title}', \n"
 		display += f"\tmessage='{self.message}', \n"
 		display += f"\ttimer={self.timer}, \n"
@@ -109,6 +106,7 @@ class Timer:
 		
 		# Vérification du titre
 		if not 0 < len(self.title) < MAX_CHAR_NAME+1:
+			# S'il est incorect, on définit les infos de l'erreur
 			obj = "nom"
 			max_char = MAX_CHAR_NAME
 		
@@ -127,8 +125,7 @@ class Timer:
 	
 	#
 	def start_timer(self):
-		""" Démarrage du timer
-		"""
+		""" Démarrage du timer """
 		if self.end:
 			return
 		
@@ -170,7 +167,7 @@ class Timer:
 	def set_timeleft(self, _format: bool = False):
 		""" Calcule du temps restant du timer
 		- Déclenche la notification si le timer est terminée.
-		- renvoie le temps restant avec formatage si demandé pour l'affichage.
+		- Renvoie le temps restant (avec formatage si demandé) pour l'affichage.
 		
 		Args:
 			- format (bool): Permet de renvoyer le temps restant formaté.
