@@ -27,7 +27,7 @@ Last updated :
 
 Todo:
 	> Sauvegarde des timers
-	  - Création d'un fichier de sauvegarde
+	  - Création d'un fichier de sauvegardeet d'une liste
 	  - Charger les timers existants lors de l'ouverture et les ajouter dans la liste
 	  - passer sur les timer de la liste lors de la fermeture pour les sauvegarder
 	  -
@@ -129,14 +129,7 @@ class TimerView(QWidget):
 	def set_default_values(self):
 		""" Définition des valeurs par défaut """
 		
-		# todo Création de la liste des dates:
-		#  Gérer les dates (ajouter les dates des alarmes actives dans la liste lors de leur démarrage)
-		self.dates = new_dates(3, 5)
-		#
-		# # Timer qui servira à vérifier le déclenchement d'une notification par date pour les alarmes
-		# self.timer_notify = QTimer()
-		# self.timer_notify.timeout.connect(self.check_dates)
-		# self.timer_notify.start(1000)  # Vérifie toutes les secondes
+		# todo chargement des timers existants
 		
 		# Timer servant à rafraîchir les timers actifs
 		# et déclencher les notifications des minuteurs

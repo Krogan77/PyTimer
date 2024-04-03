@@ -24,7 +24,6 @@ from utils import dbg
 
 
 class TimerWidget(QWidget):
-	submit_dates = Signal(datetime)
 	submit_timer = Signal(object, object)
 	
 	def __init__(self, timer=None, parent=None):
@@ -174,9 +173,9 @@ class TimerWidget(QWidget):
 	def reset_timer(self, modify=False):
 		""" Réinitialise le timer
 		
-		- Si le timer est reset après modification, on vérifie si la durée par défaut à été modifiée
+		- Si le timer est reset après modification, on vérifie si la durée par défaut a été modifiée
 		  avant de réinitialiser la durée restante.
-		  Si la durée par défaut à été modifiée, on doit absolument modifier la durée restante.
+		  Si la durée par défaut a été modifiée, on doit absolument modifier la durée restante.
 		  Si elle n'a pas été modifiée, on ne doit pas stopper le timer.
 		"""
 		if modify:

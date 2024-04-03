@@ -282,9 +282,6 @@ def send_notify(title, message):
 #
 if __name__ == '__main__':
 	
-	# 24 caractères : feuizhto
-	# 120 caractères : fderzgifgezrgfyerzgyuzegqxf,o'zygfxsquiy'xgtqou'zygtniux'gytquyef'g(qcne,tuyn'grtoecxutgseu('cntgnesuy(
-	
 	# Test
 	timer = Timer(title="gtr",
 	              message="",

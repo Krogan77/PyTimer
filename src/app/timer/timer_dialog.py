@@ -16,6 +16,8 @@ Started :
 Last updated :
 	---
 """
+
+# Imports :
 from datetime import timedelta
 
 from PySide6.QtCore import Qt
@@ -30,9 +32,10 @@ from utils import dbg
 class TimerDialog(QDialog):
 	def __init__(self, parent=None, timer=None):
 		super().__init__(parent)
-		
 		self.timer = timer
 		self.parent = parent
+		
+		self.setWindowTitle("Création de timer")
 		
 		self.create_variables()
 		self.setup_ui()
@@ -161,6 +164,7 @@ class TimerDialog(QDialog):
 		""" Définition des valeurs par défaut """
 		if self.timer:
 			self.create_mode = False
+			self.setWindowTitle("Modification de timer")
 			self.le_name_timer.setText(self.timer.title)
 			self.te_content_timer.setPlainText(self.timer.message)
 			self.spn_hours.setValue(self.timer.hours)
@@ -372,7 +376,6 @@ class TimerDialog(QDialog):
 		""" Crée un timer avec les informations du formulaire et l'envoie
 		- Cela est fait lors de l'appui sur le bouton avec un formulaire valide
 		"""
-		print("accept")
 		
 		# Préparation des données à émettre
 		title = self.le_name_timer.text()
@@ -395,7 +398,6 @@ class TimerDialog(QDialog):
 	def get_timer(self):
 		""" Renvoie le timer créé """
 		return self.timer
-	
 	##
 	
 	#
