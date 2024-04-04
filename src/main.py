@@ -4,13 +4,14 @@
 
 from PySide6.QtWidgets import QApplication
 
-from window.main_window import MainWindow
+from window.main_window import MainWindow, InvisibleParent
 
 
 if __name__ == '__main__':
 	app = QApplication()
 	
-	window = MainWindow()
+	invisible_parent = InvisibleParent()
+	window = MainWindow(invisible_parent)
 	window.show()
 	
 	app.exec()

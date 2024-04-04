@@ -7,7 +7,7 @@
     $ -- TimerView -- $
 
 Description :
-    Vue des timer
+    Vue des timers
 
 Notes :
 	- Permet de gérer les timers
@@ -15,6 +15,7 @@ Notes :
 Fonctionnalités :
 	- Création et modification des timers
 	- Affichage des timers
+	
 
 
 Todo Doc.
@@ -36,7 +37,7 @@ Todo:
 
 
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton
+from PySide6.QtWidgets import QWidget, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton
 
 from app.timer.timer_dialog import TimerDialog
 
@@ -133,7 +134,7 @@ class TimerView(QWidget):
 		# et déclencher les notifications des minuteurs
 		self.timer_refresh = QTimer()
 		self.timer_refresh.timeout.connect(self.check_timer)
-		self.timer_refresh.start(20)  # Vérifie toutes les secondes
+		self.timer_refresh.start(20)  # Vérifie toutes les 20 ms
 	##
 	
 	#
@@ -176,6 +177,7 @@ class TimerView(QWidget):
 		
 		# Mode création s'il n'y a pas de timer fourni
 		if not timer:
+			
 			# Ouvre la fenêtre de création et récupère le timer si l'utilisateur a validé
 			dialog = TimerDialog(self)
 			if dialog.exec():
@@ -186,12 +188,14 @@ class TimerView(QWidget):
 		
 		# Mode modification
 		else:
+			
 			# Ouvre la fenêtre de modification et récupère le timer si l'utilisateur a validé
 			dialog = TimerDialog(self, timer)
 			if dialog.exec():
+				
 				# Modifie le timer existant,
-				# on a l'impression qu'il n'est pas utilisé, mais il pointe bien vers le timer de la liste
 				timer = dialog.get_timer()
+				# on a l'impression qu'il n'est pas utilisé, mais il pointe bien vers le timer de la liste
 				
 				# Reset le timer pour mettre à jour les valeurs
 				widget.reset_timer(check_duration=True)
@@ -212,7 +216,7 @@ class TimerView(QWidget):
 	def closeEvent(self, event):
 		""" Fermeture de la vue """
 		
-		# todo Sauvegarde et arrêt des timers actifs
+		# todo Arrêt et sauvegarde des timers actifs
 		pass
 	##
 	
