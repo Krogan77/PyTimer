@@ -43,7 +43,7 @@ def load_timers():
 	
 	# Si la base de données est vide, on retourne des minuteurs de base
 	if not data:
-		return create_timers()
+		return default_timers()
 	
 	# Si des minuteurs existent déjà
 	else:
@@ -80,7 +80,12 @@ def save_timers(timers):
 
 
 #
-def create_timers(nombre=3):
+def default_timers(nombre=3):
+	"""
+		Retourne une liste de Timer par défaut
+			> Lorsque la base de données n'en contenait aucun
+	"""
+	
 	# Création d'une liste de 3 timers
 	from src.app.timer.timer import Timer
 	
@@ -209,7 +214,7 @@ if __name__ == '__main__':
 	# region Test de sauvegarde d'un timer
 	from app.timer.timer import Timer
 	
-	timers = create_timers()
+	timers = default_timers()
 	
 	# Test de la sauvegarde
 	save_timers(timers)
@@ -219,5 +224,18 @@ if __name__ == '__main__':
 	print(timers)
 	
 	
+
+	
+	
+	
 	# endregion
 	pass
+
+
+
+
+
+
+
+
+

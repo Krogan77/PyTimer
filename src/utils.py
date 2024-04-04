@@ -49,12 +49,12 @@ def get_db():
 
 # Configuration de base attendue dans le fichier de config_backup
 base_config = {
-	"style": "Default",
+	"style": "Combinear",
 	"save_pos": False,
 	"geox": 100,
 	"geoy": 100,
 	"geow": 0,
-	"geoh": 0,
+	"geoh": 288,
 }
 
 
