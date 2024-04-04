@@ -83,9 +83,12 @@ def save_timers(timers):
 def create_timers(nombre=3):
 	# Création d'une liste de 3 timers
 	from src.app.timer.timer import Timer
+	
+	duration = [30, 300, 1500]
+	
 	timers = []
 	for i in range(1, nombre+1):
-		timer = Timer(f"timer {i}", "Message de notification", timer=30 * i)
+		timer = Timer(f"Timer {i}", "Message de notification", timer=duration[i-1])
 		timers.append(timer)
 	return timers
 ##
