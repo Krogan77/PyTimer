@@ -9,6 +9,11 @@ from utils import check_work_path, create_log_file, dbg
 from window.options_dialog import OptionDialog
 from app.timer.timer_view import TimerView
 
+# Vérifie l'emplacement de l'application pour différencier les icônes
+if check_work_path():
+	window_icon = "icon_work"
+else:
+	window_icon = "main_icon"
 
 class InvisibleParent(QWidget):
 	def __init__(self):
@@ -18,7 +23,6 @@ class InvisibleParent(QWidget):
 		self.setWindowFlags(Qt.Tool)
 	##
 ##
-
 
 #
 class MainWindow(QMainWindow):
@@ -32,14 +36,8 @@ class MainWindow(QMainWindow):
 		self.setMinimumSize(450, 370)
 		
 		create_log_file()
-		
-		# Vérifie l'emplacement de l'application pour différencier les icônes
-		if check_work_path():
-			self.window_icon = "lib/icons/icon_work.png"
-		else:
-			self.window_icon = "lib/icons/icon_home.png"
 			
-		self.setWindowIcon(QIcon(self.window_icon))
+		self.setWindowIcon(QIcon(f"lib/icons/{window_icon}.png"))
 		
 		# Récupère la sauvegarde et configure les options
 		self.set_options()
@@ -155,7 +153,7 @@ class MainWindow(QMainWindow):
 		""" Création de l'icône système """
 		self.tray = QSystemTrayIcon()
 		try:
-			self.tray.setIcon(QIcon(self.window_icon))
+			self.tray.setIcon(QIcon(f"lib/icons/{window_icon}.png"))
 			self.tray.setVisible(True)
 			
 			# Déclenche un message de notification lors de la création de l'icône
