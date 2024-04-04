@@ -80,21 +80,30 @@ def save_timers(timers):
 
 
 #
-def default_timers(nombre=3):
+def default_timers():
 	"""
 		Retourne une liste de Timer par défaut
 			> Lorsque la base de données n'en contenait aucun
 	"""
 	
-	# Création d'une liste de 3 timers
 	from src.app.timer.timer import Timer
 	
-	duration = [30, 300, 1500]
+	default_timers = [
+		{"title": "Cuisson des pâtes",
+		 "message": "Les pâtes sont cuites",
+		 "timer": 10 * 60},
+		
+		{"title": "Temps de jeu",
+		 "message": "Le temps de jeu est terminé",
+		 "timer": 30 * 60},
+		
+		{"title": "Temps de travail",
+		 "message": "La pause est terminée",
+		 "timer": 45 * 60}
+	]
+	# Création d'une liste de 3 timers par défaut
 	
-	timers = []
-	for i in range(1, nombre+1):
-		timer = Timer(f"Timer {i}", "Message de notification", timer=duration[i-1])
-		timers.append(timer)
+	timers = [Timer(**timer) for timer in default_timers]
 	return timers
 ##
 

@@ -191,10 +191,6 @@ class Timer:
 	def reset(self):
 		""" Réinitialisation du timer """
 		
-		# Ne fais rien si le timer est terminée
-		if self.end:
-			return
-		
 		# Arrête le timer s'il est actif.
 		if self.running:
 			self.stop_timer()

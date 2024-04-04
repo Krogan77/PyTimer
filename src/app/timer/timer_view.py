@@ -255,7 +255,7 @@ class TimerView(QWidget):
 			
 		- Récupère les timers depuis le list widget et les retourne
 		"""
-		# Récupère le nombre de timer pour vérifier qu'il y en a
+		# Récupère le nombre de timer pour vérifier qu'il y en a et boucler sur la liste
 		count = self.lst_timer.count()
 		
 		# Si aucun timer, retourne une liste vide
