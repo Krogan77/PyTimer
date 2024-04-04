@@ -5,7 +5,7 @@ from PySide6.QtCore import QEvent, Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QSystemTrayIcon, QVBoxLayout, QWidget, QApplication
 
-from utils import check_work_path, create_log_file, dbg
+from utils import check_work_path, create_log_file, dbg, save_config_backup
 from window.options_dialog import OptionDialog
 from app.timer.timer_view import TimerView
 
@@ -15,6 +15,7 @@ if check_work_path():
 else:
 	window_icon = "main_icon"
 
+
 class InvisibleParent(QWidget):
 	def __init__(self):
 		super().__init__()
@@ -23,6 +24,7 @@ class InvisibleParent(QWidget):
 		self.setWindowFlags(Qt.Tool)
 	##
 ##
+
 
 #
 class MainWindow(QMainWindow):
@@ -169,31 +171,37 @@ class MainWindow(QMainWindow):
 			self.setVisible(False)
 		else:
 			self.setVisible(True)
-			# self.raise_()
+			self.activateWindow()
+			
+		if self.isMinimized():
+			self.setVisible(True)
 			self.activateWindow()
 	##
 	
 	#
-	def changeEvent(self, event):
-		if event.type() == QEvent.WindowStateChange:
-			if self.isMinimized():
-				self.setVisible(False)
-				event.ignore()  # Ignore l'événement de minimisation
-			else:
-				super().changeEvent(event)
+	# def changeEvent(self, event):
+	# 	if event.type() == QEvent.WindowStateChange:
+	# 		if self.isMinimized():
+	# 			self.setVisible(False)
+	# 			event.ignore()  # Ignore l'événement de minimisation
+	# 		else:
+	# 			super().changeEvent(event)
 	##
 	
 	#
 	def closeEvent(self, event):
 		""" Fermeture de l'application """
 		
-		from utils import save_config_backup
+		# Fermeture de la vue des timers
+		self.timer_view.close()
+		
 		
 		if self.config["save_pos"]:
 			self.config["geox"], self.config["geoy"] = self.pos().x(), self.pos().y()
 			self.config["geow"], self.config["geoh"] = self.width(), self.height()
 		
 		save_config_backup(self.config)
+		
 		
 		# Fermeture de la fenêtre parente
 		QApplication.quit()

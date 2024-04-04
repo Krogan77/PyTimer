@@ -16,9 +16,9 @@ from typing import Optional
 
 from plyer import notification
 
+from app.timer.utils import new_date
 from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE
-from app.timer.dates import new_date
-from utils import dbg
+from src.utils import dbg
 
 
 @dataclass
@@ -190,6 +190,10 @@ class Timer:
 	#
 	def reset(self):
 		""" Réinitialisation du timer """
+		
+		# Ne fais rien si le timer est terminée
+		if self.end:
+			return
 		
 		# Arrête le timer s'il est actif.
 		if self.running:

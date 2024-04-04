@@ -5,30 +5,108 @@
 """
 
 from datetime import datetime, timedelta
+import os
+from tinydb import TinyDB
 
 
-def new_date(
-		seconds: int | float | timedelta = 10,
-		now: bool = False)\
-		-> datetime:
+# Récupérer le chemin de base de la base de données
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+data_dir = os.path.join(BASE_DIR, "data")
+
+# Vérifier si le dossier 'data' existe, le créer si ce n'est pas le cas
+if not os.path.exists(data_dir):
+	os.makedirs(data_dir)
+
+# Construire le chemin complet vers le fichier de la base de données
+db_path = os.path.join(data_dir, "timers.json")
+
+# Créer une instance de TinyDB
+db = TinyDB(db_path, indent=4)
+
+
+def load_timers():
+	"""
+	Chargement des minuteurs depuis la base de données
+		> Lors de l'ouverture de l'application timer
 	
+	- Récupère les minuteurs depuis la base de données.
+	- Crée les minuteurs avant de les retourner.
+	
+	Returns:
+		list: Liste des minuteurs
+	"""
+	
+	from src.app.timer.timer import Timer
+	
+	# Récupère les minuteurs depuis la base de données
+	data = db.all()
+	
+	# Si la base de données est vide, on retourne des minuteurs de base
+	if not data:
+		return create_timers()
+	
+	# Si des minuteurs existent déjà
+	else:
+		# Création des minuteurs
+		timers = []
+		for timer in data:
+			timer = Timer(**timer)
+			timers.append(timer)
+		
+		# Retourne les minuteurs
+		return timers
+##
+
+
+#
+def save_timers(timers):
+	"""
+	Sauvegarde des minuteurs dans la base de données
+		> lors de la fermeture de la vue des timers
+	
+	Args:
+		timers : list
+			Liste des minuteurs à sauvegarder
+	"""
+	
+	# Supprime la base de données précédente
+	db.truncate()
+	
+	# Sauvegarde les minuteurs dans la base de données
+	for timer in timers:
+		timer.reset()
+		db.insert(timer.__dict__)
+##
+
+
+#
+def create_timers(nombre=3):
+	# Création d'une liste de 3 timers
+	from src.app.timer.timer import Timer
+	timers = []
+	for i in range(1, nombre+1):
+		timer = Timer(f"timer {i}", "Message de notification", timer=30 * i)
+		timers.append(timer)
+	return timers
+##
+
+
+#
+def new_date(seconds: int | float | timedelta = 10) -> datetime:
 	"""
 	Calcule une nouvelle date en ajoutant un nombre spécifié de secondes à l'heure actuelle ou retourne l'heure actuelle.
 
 	Args:
-	    - seconds (int, float, timedelta): Le nombre de secondes
-	        à ajouter à l'heure actuelle pour calculer la nouvelle date.
+		- seconds (int, float, timedelta): Le nombre de secondes
+			à ajouter à l'heure actuelle pour calculer la nouvelle date.
 		- now (bool): Si True, la fonction retournera l'heure actuelle.
 
 	Returns:
-	    - datetime: L'heure actuelle si 'now' est True, sinon une date future calculée.
+		- datetime: Date future calculée.
 
 	Exemples:
-	    Pour obtenir l'heure actuelle:
-	        >>> new_date(now=True)
-
-	    Pour obtenir une date 20 secondes dans le futur:
-	        >>> new_date(seconds=20, now=False)
+		Pour obtenir une date 20 secondes dans le futur:
+			>>> new_date(seconds=20)
 	
 	Notes:
 		- Il est possible de donner une valeur négative à cette fonction pour obtenir une date
@@ -37,8 +115,6 @@ def new_date(
 	"""
 	
 	current_time = datetime.now()
-	if now:
-		return current_time
 	
 	if isinstance(seconds, float):
 		microseconds = get_microseconds(seconds)
@@ -51,33 +127,6 @@ def new_date(
 	
 	date = current_time + timedelta(seconds=seconds)
 	return date
-
-
-def new_dates(nbr: int = 3, interval: int = 15) -> list:
-	"""
-	Génère une liste de dates futures, chacune espacée d'un intervalle de temps donné.
-
-	Args:
-	    nbr (int): Le nombre de dates à générer.
-	    interval (int): L'intervalle en secondes entre chaque date générée.
-
-	Returns:
-	    list: Une liste d'objets datetime. Si 'now' est True, la liste contiendra l'heure actuelle répétée 'nbr' fois.
-	          Sinon, elle contiendra une série de dates futures espacées par l'intervalle spécifié.
-
-	Exemples:
-	    Pour obtenir une liste de l'heure actuelle répétée 3 fois:
-	        >>> new_dates(nbr=3, now=True)
-
-	    Pour générer une liste de 3 dates, chacune espacée de 15 secondes:
-	        >>> new_dates(nbr=3, interval=15, now=False)
-	"""
-	dates = []
-	for i in range(nbr):
-		date = new_date(interval * (i+1))
-		dates.append(date)
-	
-	return dates
 
 
 def get_microseconds(seconds: float) -> int:
@@ -120,16 +169,10 @@ def get_microseconds(seconds: float) -> int:
 
 if __name__ == '__main__':
 	
+	# region test date
 	# Test new_date
 	# date = new_date(2000000)
 	# print(datetime.now(), date, sep="\n")
-	
-	
-	# Test new_dates
-	# dates = new_dates(5, 20)
-	# for date in dates:
-	# 	print(date.strftime("%H %M %S"))
-	
 	
 	# -- Test de création de date avec un float -- #
 	
@@ -157,5 +200,21 @@ if __name__ == '__main__':
 	
 	now = datetime.now()
 	print(now, new, sep="\n")
+	# endregion
 	
+	
+	# region Test de sauvegarde d'un timer
+	from app.timer.timer import Timer
+	
+	timers = create_timers()
+	
+	# Test de la sauvegarde
+	save_timers(timers)
+	#
+	# Test du chargement
+	timers = load_timers()
+	print(timers)
+	
+	
+	# endregion
 	pass

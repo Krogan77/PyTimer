@@ -18,7 +18,7 @@ from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLabel, QLineEd
 
 from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE
 from app.timer.timer import Timer
-from utils import dbg
+from src.utils import dbg
 
 
 class TimerDialog(QDialog):

@@ -17,7 +17,7 @@ from PySide6.QtCore import QSize, Signal, Slot
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton
 
-from utils import dbg
+from src.utils import dbg
 
 font_weight = "font-weight: 750;"
 
@@ -161,7 +161,7 @@ class TimerWidget(QWidget):
 		
 		if self.timer.end:
 			if self.timer.running:
-				# Si le timer est en cours mais terminé, on le stop
+				# Si le timer est en cours, mais terminé, on le stop
 				self.timer.stop_timer()
 				self.btn_play.setIcon(QIcon("lib/icons/icon_reset"))
 				return
