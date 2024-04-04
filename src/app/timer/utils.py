@@ -75,6 +75,7 @@ def save_timers(timers):
 	# Sauvegarde les minuteurs dans la base de données
 	for timer in timers:
 		timer.reset()
+		print(timer)
 		db.insert(timer.__dict__)
 ##
 
@@ -88,21 +89,21 @@ def default_timers():
 	
 	from src.app.timer.timer import Timer
 	
+	# Création d'une liste de 3 timers par défaut
 	default_timers = [
-		{"title": "Cuisson des pâtes",
-		 "message": "Les pâtes sont cuites",
-		 "timer": 10 * 60},
+		{"title": "Temps de travail",
+		 "message": "La pause est terminée",
+		 "timer": 45 * 60},
 		
 		{"title": "Temps de jeu",
 		 "message": "Le temps de jeu est terminé",
 		 "timer": 30 * 60},
 		
-		{"title": "Temps de travail",
-		 "message": "La pause est terminée",
-		 "timer": 45 * 60}
+		{"title": "Cuisson des pâtes",
+		 "message": "Les pâtes sont cuites",
+		 "timer": 10 * 60}
 	]
-	# Création d'une liste de 3 timers par défaut
-	
+	# Création des timers
 	timers = [Timer(**timer) for timer in default_timers]
 	return timers
 ##

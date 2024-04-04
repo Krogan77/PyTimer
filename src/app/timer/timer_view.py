@@ -130,6 +130,7 @@ class TimerView(QWidget):
 		
 		# Connexion de la selection d'un timer dans la liste vers une méthode d'activation du bouton
 		self.lst_timer.currentItemChanged.connect(lambda: self.btn_delete_timer.setEnabled(True))
+		self.lst_timer.itemDoubleClicked.connect(self.get_timer)
 		
 		# Connexion du bouton de suppression
 		self.btn_delete_timer.clicked.connect(self.delete_timer)
@@ -177,7 +178,7 @@ class TimerView(QWidget):
 		
 		# Ajout du widget à la liste
 		self.item.setSizeHint(self.timer_widget.sizeHint())
-		self.lst_timer.addItem(self.item)
+		self.lst_timer.insertItem(0, self.item)
 		self.lst_timer.setItemWidget(self.item, self.timer_widget)
 		
 	
@@ -279,7 +280,23 @@ class TimerView(QWidget):
 		
 		# Retourne la liste des timers
 		return timers
+	##
 	
+	#
+	def get_timer(self, item):
+		"""
+			Récupère un timer dans la liste
+				> Lorsque ce dernier est double cliqué
+		"""
+		# Récupération du widget de l'item
+		widget_timer = self.lst_timer.itemWidget(item)
+		
+		# Récupère le timer du widget
+		if widget_timer and hasattr(widget_timer, 'timer'):
+			timer = widget_timer.timer
+		
+			# Ouvre le formulaire de modification
+			self.create_timer(timer, widget_timer)
 	##
 	
 	def closeEvent(self, event):
