@@ -15,29 +15,31 @@ Notes :
 Fonctionnalités :
 	- Création et modification des timers
 	- Affichage des timers
+
+
+Todo Doc.
+#
+
+Todo:
+	> Sauvegarde des timers
+	- Création d'un fichier de sauvegardeet d'une liste
+	- Charger les timers existants lors de l'ouverture et les ajouter dans la liste
+	- passer sur les timer de la liste lors de la fermeture pour les sauvegarder
+	-
+	> Ajout de temps restant
+	-
+	> Multiple notifications pour un seul timer
+	.
 	
 """
 
-# Todo Doc.
-#
 
-# Todo:
-#       > Sauvegarde des timers
-#       - Création d'un fichier de sauvegardeet d'une liste
-#       - Charger les timers existants lors de l'ouverture et les ajouter dans la liste
-#       - passer sur les timer de la liste lors de la fermeture pour les sauvegarder
-#       -
-#       .
 
-from datetime import datetime
-
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton
 
 from app.timer.timer_dialog import TimerDialog
-from app.timer.timer import Timer, send_notify
 
-from app.timer.dates import new_dates
 from app.timer.timer_widget import TimerWidget
 
 
@@ -46,40 +48,39 @@ class TimerView(QWidget):
 	def __init__(self):
 		super().__init__()
 		
+		# Création des éléments de l'interface
 		self.set_variables()
 		self.setup_ui()
 		self.set_style()
 		self.setup_connections()
 		self.set_default_values()
+	##
 	
+	#
 	def set_variables(self):
 		""" Définition des variables de la vue """
 		pass
+	##
 	
+	#
 	def setup_ui(self):
 		""" Création des éléments de l'interface """
 		
-		self.hlayout = QHBoxLayout()
-		self.setLayout(self.hlayout)
-		
 		self.vlayout = QVBoxLayout()
-		self.hlayout.addLayout(self.vlayout)
+		self.setLayout(self.vlayout)
 		
+		# Bouton de création de timer
 		self.btn_new_timer = QPushButton("Nouveau")
 		self.btn_new_timer.setFixedWidth(150)
 		self.vlayout.addWidget(self.btn_new_timer)
 		
+		# Liste des timers
 		self.lst_timer = QListWidget()
 		self.lst_timer.setMinimumWidth(400)
 		self.vlayout.addWidget(self.lst_timer)
-		
-		# Permet de repousser les éléments sur la gauche
-		# self.widget_space = QWidget()
-		# self.widget_space.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Minimum)
-		# self.hlayout.addWidget(self.widget_space)
-		
-		pass
+	##
 	
+	#
 	def set_style(self):
 		""" Modification du style des éléments """
 		
@@ -120,6 +121,7 @@ class TimerView(QWidget):
 		""" Création des connexions entre les widgets """
 		self.btn_new_timer.clicked.connect(self.create_timer)
 		pass
+	##
 	
 	#
 	def set_default_values(self):
@@ -135,34 +137,42 @@ class TimerView(QWidget):
 	##
 	
 	#
-	def check_dates(self):
-		if self.dates:
-			# Assurez-vous que votre liste est triée de sorte que la prochaine date soit la première
-			next_date = self.dates[0]
-			if datetime.now() >= next_date.replace(microsecond=0):
-				# Envoie le signal pour déclencher la notification
-				send_notify("Test Notify", "hello world !")
-				# Supprimer la date traitée ou la mettre à jour
-				self.dates.pop(0)
-	
 	def add_timer(self, timer):
-		""" Création d'un nouveau timer !
-		- Appeler par le signal du formulaire
-		- Récupère le timer et le place dans son widget puis dans le list widget.
+		"""
+		Création d'un nouveau timer !
+			> Déclenchée par le signal du formulaire
+		
+		- Récupère le timer fourni par le formulaire.
+		- Crée le widget pour le timer pour l'insérer dans la liste.
+		- Connecte le signal du bouton de modification vers la méthode correspondante.
+		- Place le timer dans son widget et l'ajoute à la liste.
+		
+		:param timer: Timer
 		"""
 		
+		# Création du widget
 		self.item = QListWidgetItem()
 		self.timer_widget = TimerWidget(parent=self, timer=timer)
+		
+		# Connexion du signal de modification
 		self.timer_widget.submit_timer.connect(self.create_timer)
 		
+		# Ajout du widget à la liste
 		self.item.setSizeHint(self.timer_widget.sizeHint())
-		
 		self.lst_timer.addItem(self.item)
 		self.lst_timer.setItemWidget(self.item, self.timer_widget)
 		
 	
 	def create_timer(self, timer=None, widget=None):
-		""" Création d'un nouveau timer """
+		""" Création d'un nouveau timer
+			> Déclenchée par le bouton de création de la vue
+			> ainsi que le bouton de modification des timers
+			
+			- Si aucun timer n'est fourni, on ouvre le formulaire de création.
+			- Si un timer est fourni par le bouton de modification, on ouvre le formulaire
+			  en fournissant les informations du timer.
+			- Ajoute ou modifie le timer existant dans la liste si l'utilisateur a validé le formulaire.
+		"""
 		
 		# Mode création s'il n'y a pas de timer fourni
 		if not timer:
@@ -174,29 +184,33 @@ class TimerView(QWidget):
 				# Ajoute le timer à la liste
 				self.add_timer(timer)
 		
-		# Mode modification s'il y a un timer fourni
+		# Mode modification
 		else:
 			# Ouvre la fenêtre de modification et récupère le timer si l'utilisateur a validé
 			dialog = TimerDialog(self, timer)
 			if dialog.exec():
-				# Modifie le timer existant, on a l'impression qu'il n'est pas utilisé,
-				# mais il point bien vers le timer de la liste
+				# Modifie le timer existant,
+				# on a l'impression qu'il n'est pas utilisé, mais il pointe bien vers le timer de la liste
 				timer = dialog.get_timer()
 				
 				# Reset le timer pour mettre à jour les valeurs
-				widget.reset_timer(modify=True)
+				widget.reset_timer(check_duration=True)
 	
 	def check_timer(self):
-		""" Passe sur les éléments de la liste pour mettre à jour les timers actifs """
+		""" Mis à jour des timers actifs
+			> Déclenchée par le timer de rafraîchissement
+			
+			- Parcours tous les widgets de la liste pour mettre à jour le temps restant.
+			- Toute la logique se fait dans les widgets de timers et dans les timers eux-mêmes.
+		"""
 		
+		# Parcours des widgets pour mettre à jour les timers
 		for widget in self.lst_timer.findChildren(TimerWidget):
 			widget.update_timeleft()
 		
 	
 	def closeEvent(self, event):
 		""" Fermeture de la vue """
-		# self.timer_notify.stop()
-		# event.accept()
 		
 		# todo Sauvegarde et arrêt des timers actifs
 		pass
@@ -204,6 +218,3 @@ class TimerView(QWidget):
 	
 	#
 #
-
-
-

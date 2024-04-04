@@ -33,23 +33,24 @@ class MainWindow(QMainWindow):
 		# Création de l'icône de la barre système
 		self.create_tray_icon()
 		
+
+		# Création des éléments de l'interface
 		self.set_variables()
 		self.setup_ui()
+		self.set_style()
 		self.setup_connections()
 		self.set_default_values()
-		
-		self.central.setStyleSheet("""
-					* {
-					font-weight: 600;
-					}
-					""")
+	##
 	
+	#
 	def set_variables(self):
 		""" Définition des variables de l'application """
 		self.options_dialog = OptionDialog(parent=self)
 		
 		pass
-		
+	##
+	
+	#
 	def setup_ui(self):
 		""" Création de l'interface graphique """
 		
@@ -66,6 +67,18 @@ class MainWindow(QMainWindow):
 		self.layout.addWidget(self.timer_view)
 		
 		pass
+	##
+	
+	#
+	def set_style(self):
+		""" Modification du style """
+
+		self.central.setStyleSheet("""
+					* {
+					font-weight: 600;
+					}
+					""")
+	##
 	
 	def create_menu_bar(self):
 		""" Création de la barre de menu """
