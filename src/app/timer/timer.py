@@ -6,6 +6,7 @@
     $ -- Timer -- $
 
 Classe représentant un minuteur.
+
 """
 
 
@@ -36,11 +37,23 @@ class Timer:
 	
 	_timeleft: int | timedelta = 0  # Temps restant en secondes et microsecondes
 	
+	number_rings: int = 0  # Nombre de sonneries
+	_number_rings: int = 0  # Nombre de sonneries restantes
+	
+	interval: int = 0  # Temps par défaut entre chaque sonnerie
+	_interval: int = 0  # Temps actuellement utilisé entre chaque sonnerie
+	
 	# Date de fin du timer
 	_end_date: Optional[datetime] = None
 	
-	running: bool = False  # État du timer
-	end: bool = False  # Permet de vérifier si le timer est terminée
+	# Date utilisée pour la prochaine notification lorsque le timer après que le timer a dépassé sa date de fin.
+	notif_date: Optional[datetime] = None
+	
+	# État du timer
+	running: bool = False
+	remaining: bool = False
+	# Permet de vérifier si le timer est terminée
+	end: bool = False
 	
 	#
 	def __post_init__(self):
@@ -51,6 +64,10 @@ class Timer:
 		
 		# Défini la durée restante par défaut
 		self._timeleft = self.timer
+		
+		self.check_number_rings()
+		self.check_times_between_rings()
+	
 	##
 	
 	@property
@@ -124,6 +141,19 @@ class Timer:
 	##
 	
 	#
+	def check_number_rings(self):
+		""" Vérifie que le nombre de sonneries est valide """
+		if self.number_rings > self._number_rings:
+			self._number_rings = self.number_rings
+	##
+	
+	def check_times_between_rings(self):
+		""" Permet de reset le temps entre les sonneries """
+		if self.interval != self._interval:
+			self._interval = self.interval
+	##
+	
+	#
 	def start_timer(self):
 		""" Démarrage du timer """
 		if self.end:
@@ -136,6 +166,7 @@ class Timer:
 		
 		# Défini la date de fin
 		self._end_date = new_date(self._timeleft)
+		self.notif_date = self._end_date
 		
 		# Passe l'attribut running à True
 		self.running = True
@@ -165,25 +196,70 @@ class Timer:
 	
 	#
 	def set_timeleft(self, _format: bool = False):
-		""" Calcule du temps restant du timer
-		- Déclenche la notification si le timer est terminée.
-		- Renvoie le temps restant (avec formatage si demandé) pour l'affichage.
+		""" Mis à jour du timer
+		
+		- Calcul et renvoie du temps restant
+		- Déclenche des notifications lorsque le timer dépasse les dates prévues.
 		
 		Args:
-			- format (bool): Permet de renvoyer le temps restant formaté.
+			- format (bool): Permet de renvoyer le temps restant formaté si True.
 		"""
 		
+		# S'assure que le timer est actif, on ne fait rien sinon
 		if self.running:
-			# Calcule le temps restant
-			self._timeleft = self._end_date - datetime.now()
+			now = datetime.now()  # Récupère la date actuelle
 			
-			# Si le minuteur est terminée, déclenche la notification
-			if self._timeleft.total_seconds() < 0:
+			# Calcul le temps restant en utilisant la date de fin réelle pour l'affichage
+			self._timeleft = self._end_date - now
+			
+			# Calcul du temps restant avant la prochaine sonnerie
+			timeleft_notif = self.notif_date - now
+			
+			# Si la date de fin est dépassée, déclenche une notification
+			if timeleft_notif.total_seconds() < 0:
+				self.remaining = True
+				# Calcul des secondes écoulées depuis la date de fin
+				# avec formatage pour l'affichage dans la notification
+				seconds = format_duration((now - self._end_date).seconds)
+				
+				# S'il reste des sonneries supplémentaires à déclencher
+				if self._number_rings:
+					
+					# Récupère le message de notification pour pouvoir le modifier localement
+					message = self.message
+					
+					# Si le nombre de sonneries par défaut est différent du nombre de sonneries restantes
+					if self.number_rings != self._number_rings:
+						
+						# On modifie le message de notification pour afficher le temps écoulée depuis la date de fin
+						message += f"\n - {seconds} !"
+					
+					# Déclenche la notification
+					send_notify(self.title, message)
+					
+					# Ajoute du temps supplémentaire pour la prochaine notif
+					self.notif_date += timedelta(seconds=self._interval)
+					
+					self._number_rings -= 1  # Nombre de sonneries restantes -1
+					return
+				
+				# Dernière sonnerie lorsque le nombre de sonneries est à zéro
 				if not self.end:
-					send_notify(self.title, self.message)
+					
+					# Si ce n'est pas la première sonnerie,
+					# car le nombre par défaut n'est pas zéro
+					if self.number_rings:
+						# Modification du message de notification pour afficher le temps écoulée
+						message = self.message + f"\n - {seconds} !"
+					else:
+						# Sinon, on garde le message par défaut
+						message = self.message
+					
+					# Déclenche la notification
+					send_notify(self.title, message)
 					self.end = True
 		
-		# Retourne le temps restant avec formatage si demandé
+		# Dans tous les cas, on renvoie le temps restant avec formatage si demandé
 		return self.timeleft if _format else self._timeleft
 	##
 	
@@ -198,7 +274,11 @@ class Timer:
 		# Reset des attributs
 		self._timeleft = self.timer
 		self._end_date = None
+		self.notif_date = None
+		self.remaining = False
 		self.end = False
+		self.check_number_rings()
+		self.check_times_between_rings()
 	##
 ##
 
@@ -211,7 +291,7 @@ def format_duration(delta: int | float | timedelta, _format=True) -> str | tuple
 	:param _format: Format de sortie
 	:return: Durée formatée en heures, minutes et secondes
 	"""
-	result = "-" if isinstance(delta, timedelta) and delta.total_seconds() < 0 else ""
+	result = "- " if isinstance(delta, timedelta) and delta.total_seconds() < 0 else ""
 	
 	# Prendre la valeur absolue de la durée en secondes
 	total_seconds = abs(delta.total_seconds()) if isinstance(delta, timedelta) else abs(delta)
@@ -220,7 +300,7 @@ def format_duration(delta: int | float | timedelta, _format=True) -> str | tuple
 	hours, remainder = divmod(total_seconds, 3600)
 	minutes, seconds = divmod(remainder, 60)
 	
-	# Ajouter une logique pour permettre de renvoyer les heures, minutes et secondes
+	# Si le format n'est pas demandé, renvoie les valeurs brutes
 	if not _format:
 		return hours, minutes, seconds
 	
@@ -255,9 +335,11 @@ def send_notify(title, message):
 if __name__ == '__main__':
 	
 	# Test
-	timer = Timer(title="gtr",
-	              message="",
+	timer = Timer(title="gtrxd",
+	              message="notification",
 	              timer=16058,
+	              number_rings=3,
+	              interval=10,
 	              )
 	
 	dbg(timer)
@@ -265,7 +347,9 @@ if __name__ == '__main__':
 	# Test de la création de date de fin
 	timer.start_timer()
 	dbg("Création de la date de fin :", timer, sep="\n")
-	
+	timer._end_date += timedelta(seconds=30)
+	dbg("Repoussement de la date de fin :", timer, sep="\n")
+
 	
 	# Test du calcul du temps restant
 	

@@ -6,28 +6,8 @@
 
     $ -- TimerView -- $
 
-Description :
-    Vue des timers
+Vue des timers
 
-Notes :
-	- Permet de gérer les timers
-
-Fonctionnalités :
-	- Timer par défaut dans l'applications
-	- Création de timer personnalisé et modification/suppression de timer existant
-	- Sauvegarde des timers sur le disque
-	-
-
-
-Todo Doc.
-#
-
-Todo:
-	> Ajout de temps restant
-	-
-	> Multiple notifications pour un seul timer
-	.
-	
 """
 
 
@@ -48,7 +28,7 @@ class TimerView(QWidget):
 		super().__init__()
 		
 		# Création des éléments de l'interface
-		self.set_variables()
+		# self.set_variables()
 		self.setup_ui()
 		self.set_style()
 		self.setup_connections()
@@ -76,6 +56,7 @@ class TimerView(QWidget):
 		self.btn_new_timer.setFixedWidth(150)
 		self.hlayout.addWidget(self.btn_new_timer)
 		
+		# Bouton de suppression de timer
 		self.btn_delete_timer = QPushButton("Supprimer")
 		self.btn_delete_timer.setEnabled(False)
 		self.btn_delete_timer.setFixedWidth(150)
@@ -99,18 +80,18 @@ class TimerView(QWidget):
 			}
 			
 			QLineEdit {
-			margin: 5px;
-			padding: 3px;
+				margin: 5px;
+				padding: 3px;
 			}
 			
 			QSpinBox {
-			margin-top: 3px;
-			margin-bottom: 3px;
-			padding: 3px;
+				margin-top: 3px;
+				margin-bottom: 3px;
+				padding: 3px;
 			}
 			
 			QLabel {
-			margin-top: 5px;
+				margin-top: 5px;
 			}
 			
 			QListWidget {
@@ -141,17 +122,14 @@ class TimerView(QWidget):
 	def set_default_values(self):
 		""" Définition des valeurs par défaut """
 		
-		# todo chargement des timers existants
-		
-		# Timer servant à rafraîchir les timers actifs
+		# QTimer de l'application servant à rafraîchir les timers actifs
 		# et déclencher les notifications des minuteurs
 		self.timer_refresh = QTimer()
 		self.timer_refresh.timeout.connect(self.check_timer)
 		self.timer_refresh.start(20)  # Vérifie toutes les 20 ms
 		
 		# Ajout des timers existants dans la liste
-		timers = load_timers()
-		for timer in timers:
+		for timer in load_timers():
 			self.add_timer(timer)
 	##
 	

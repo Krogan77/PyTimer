@@ -4,9 +4,7 @@
 
 """ Classe TimerDialog
 
-Description :
-    Permet la création et la modification d'un mminuteur
-
+Permet la création et la modification d'un mminuteur.
 """
 
 # Imports :
@@ -16,12 +14,16 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QSpinBox, \
 	QDialogButtonBox
 
-from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE
+from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE, MAX_RINGS, MAX_INTERVAL
 from app.timer.timer import Timer
 from src.utils import dbg
 
 
 class TimerDialog(QDialog):
+	""" Classe TimerDialog
+
+	Permet la création et la modification d'un mminuteur.
+	"""
 	def __init__(self, parent=None, timer=None):
 		super().__init__(parent)
 		self.timer = timer
@@ -77,6 +79,9 @@ class TimerDialog(QDialog):
 		self.te_content_timer.setPlaceholderText(placeholder_text)
 		self.vlayout.addWidget(self.te_content_timer)
 		
+		self.lb_times = QLabel("Durée du minuteur :")
+		self.vlayout.addWidget(self.lb_times)
+		
 		#
 		# ---   Layout SpinBox --- #
 		self.hlayout_spn = QHBoxLayout()
@@ -84,7 +89,7 @@ class TimerDialog(QDialog):
 		
 		# Heures
 		self.spn_hours = QSpinBox()
-		self.spn_hours.setSuffix(" Hours")
+		self.spn_hours.setSuffix(" hours")
 		self.spn_hours.setMaximum(24)
 		self.hlayout_spn.addWidget(self.spn_hours)
 		
@@ -96,10 +101,33 @@ class TimerDialog(QDialog):
 		
 		# Secondes
 		self.spn_seconds = QSpinBox()
-		self.spn_seconds.setSuffix(" Seconds")
+		self.spn_seconds.setSuffix(" seconds")
 		self.spn_seconds.setMaximum(60)
 		self.spn_seconds.setSingleStep(5)
 		self.hlayout_spn.addWidget(self.spn_seconds)
+		
+		# Nombre de sonneries
+		self.lb_number_rings = QLabel("Sonneries supplémentaire :")
+		self.vlayout.addWidget(self.lb_number_rings)
+		
+		self.hlayout_number_rings = QHBoxLayout()
+		self.vlayout.addLayout(self.hlayout_number_rings)
+		
+		# Nombre de sonneries supplémentaires
+		self.spn_rings = QSpinBox()
+		self.spn_rings.setSuffix(f" /{MAX_RINGS}")
+		self.spn_rings.setMaximum(MAX_RINGS)
+		self.hlayout_number_rings.addWidget(self.spn_rings)
+		
+		self.lb_times_rings = QLabel(" toutes les ")
+		self.hlayout_number_rings.addWidget(self.lb_times_rings)
+		
+		# Temps entre les sonneries
+		self.spn_interval = QSpinBox()
+		self.spn_interval.setSuffix(f"s /{MAX_INTERVAL}")
+		self.spn_interval.setMaximum(MAX_INTERVAL)
+		self.spn_interval.setSingleStep(15)
+		self.hlayout_number_rings.addWidget(self.spn_interval)
 		
 		# Boite de bouton de validation
 		self.button_box = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
@@ -126,7 +154,8 @@ class TimerDialog(QDialog):
 				}
 				
 				QTextEdit {
-					border-radius: 10px;
+					border-radius: 5px;
+					border: 2px solid black;
 				}
 				
 				QDialogButtonBox > QPushButton {
@@ -153,6 +182,11 @@ class TimerDialog(QDialog):
 		
 		self.spn_hours.valueChanged.connect(lambda: self.check_spinbox("hours"))
 		
+		self.spn_rings.valueChanged.connect(self.check_number_rings)
+		
+		self.spn_interval.valueChanged.connect(lambda: self.correct_value(self.spn_interval))
+		self.spn_interval.valueChanged.connect(self.check_remaining)
+		
 		self.button_box.accepted.connect(self.accept)
 		self.button_box.rejected.connect(self.reject)
 		pass
@@ -166,7 +200,7 @@ class TimerDialog(QDialog):
 		if self.timer:
 			
 			# Change le mode de la fenêtre pour savoir ensuite
-			# que l'on doit renvoyer le même timer
+			# que l'on doit modifier le timer fourni et non en créer un nouveau
 			self.setWindowTitle("Modification")
 			
 			# Ajoute les informations du timer dans les champs
@@ -175,6 +209,8 @@ class TimerDialog(QDialog):
 			self.spn_hours.setValue(self.timer.hours)
 			self.spn_minutes.setValue(self.timer.minutes)
 			self.spn_seconds.setValue(self.timer.seconds)
+			self.spn_rings.setValue(self.timer.number_rings)
+			self.spn_interval.setValue(self.timer.interval)
 	##
 	
 	#
@@ -239,7 +275,7 @@ class TimerDialog(QDialog):
 			- text (str): Texte à afficher dans le label, contient le nombre de caractères restants.
 		"""
 		
-		# Champ message de notification
+		# Champ du message de notification
 		if field == "message":
 			
 			# Modifie le texte du label avec le nombre de caractères restants
@@ -255,6 +291,7 @@ class TimerDialog(QDialog):
 				self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
 				self.lb_count_char_message.setStyleSheet("QLabel {color: #c5130d;}")
 		
+		# Champ du nom du minuteur
 		# Logique identique à celle du champ message
 		elif field == "name":
 			self.lb_count_char_name.setText(text)
@@ -290,6 +327,49 @@ class TimerDialog(QDialog):
 			# Modification du spin box
 			self.spn_seconds.setValue(int(start_value + end_value))
 	
+	@staticmethod
+	def correct_value(obj):
+		""" Corrige la valeur du spinbox pour qu'elle soit un multiple de 15 """
+		value = obj.value()
+		step = obj.singleStep()
+		corrected_value = (value // step) * step
+		if value % step != 0:
+			obj.setValue(corrected_value)
+	
+	#
+	def check_remaining(self):
+		""" Vérifie la valeur du spinbox du temps entre les sonneries
+				> Lorsqu'il est modifié
+		"""
+		# Vérification du nombre de sonneries
+		# Cela empêche d'augmenter le temps entre les sonneries si le nombre de sonneries est zéro
+		self.check_number_rings()
+		
+		# Si le temps entre les sonneries est zéro et le nombre de sonneries est différent de zéro
+		if self.spn_interval.value() == 0 and self.spn_rings.value() != 0:
+			# On force le temps entre les sonneries à être de 15 secondes
+			# cela empêche le temps restant d'atteindre zéro si le nombre de sonneries est différent de zéro
+			self.spn_interval.setValue(15)
+	##
+	
+	#
+	def check_number_rings(self):
+		"""
+			Vérifie le spin box du nombre de sonneries
+				> Lorsqu'il est modifié ou que le temps entre les sonneries est modifié
+		"""
+		
+		# Vérifie si le nombre de sonneries est zéro
+		if self.spn_rings.value() == 0:
+			# Force le spin box du temps entre les sonneries à zéro
+			self.spn_interval.setValue(0)
+		else:
+			# Si le nombre de sonneries est différent de zéro, le temps entre les sonneries ne peut pas l'être
+			if self.spn_interval.value() == 0:
+				self.spn_interval.setValue(15)
+	##
+	
+	#
 	def check_spinbox(self, spinbox: str):
 		"""
 		Vérification principale sur les spinbox afin d'activer le bouton de validation du formulaire.
@@ -353,12 +433,12 @@ class TimerDialog(QDialog):
 			check = False
 			
 		# Check spinbox
-		s = self.spn_seconds.value()
-		m = self.spn_minutes.value()
-		h = self.spn_hours.value()
+		seconds = self.spn_seconds.value()
+		minutes = self.spn_minutes.value()
+		hours = self.spn_hours.value()
 		
 		# Vérifie si au moins un spinbox possède une valeur
-		if not s and not m and not h:
+		if not seconds and not minutes and not hours:
 			check = False
 		
 		# Si aucune vérification n'a echouer
@@ -369,12 +449,12 @@ class TimerDialog(QDialog):
 			self.button_box.button(QDialogButtonBox.Ok).setEnabled(False)
 	
 	@property
-	def duration(self):
+	def spn_duration(self):
 		""" Récupère les valeurs des spin box et constuit une durée en secondes """
-		s = self.spn_seconds.value()
-		m = self.spn_minutes.value()
-		h = self.spn_hours.value()
-		return timedelta(hours=h, minutes=m, seconds=s).seconds
+		seconds = self.spn_seconds.value()
+		minutes = self.spn_minutes.value()
+		hours = self.spn_hours.value()
+		return timedelta(hours=hours, minutes=minutes, seconds=seconds).seconds
 	##
 	
 	#
@@ -386,20 +466,24 @@ class TimerDialog(QDialog):
 		# Récupération des informations du formulaire
 		title = self.le_name_timer.text()
 		message = self.te_content_timer.toPlainText()
-		duration = self.duration
+		duration = self.spn_duration
+		number_rings = self.spn_rings.value()
+		interval = self.spn_interval.value()
 		
 		# Si la fenêtre est en mode de création
 		if self.windowTitle() == "Création":
 			# On crée un timer avec les informations récupérées
-			self.timer = Timer(title, message, duration)
+			self.timer = Timer(title, message, duration, number_rings=number_rings, interval=interval)
 		
 		# Si la fenêtre est en mode de modification
 		else:
 			# On modifie le timer fourni
 			self.timer.title = title
 			self.timer.message = message
-			self.timer.timer = self.duration
-		
+			self.timer.timer = self.spn_duration
+			self.timer.number_rings = number_rings
+			self.timer.interval = interval
+			
 		# Accepte le formulaire et le ferme
 		super().accept()
 	

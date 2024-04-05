@@ -5,23 +5,8 @@
 """
 
 from datetime import datetime, timedelta
-import os
-from tinydb import TinyDB
+from src.app.timer.config import DB_TIMER
 
-
-# Récupérer le chemin de base de la base de données
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-data_dir = os.path.join(BASE_DIR, "data")
-
-# Vérifier si le dossier 'data' existe, le créer si ce n'est pas le cas
-if not os.path.exists(data_dir):
-	os.makedirs(data_dir)
-
-# Construire le chemin complet vers le fichier de la base de données
-db_path = os.path.join(data_dir, "timers.json")
-
-# Créer une instance de TinyDB
-db = TinyDB(db_path, indent=4)
 
 
 def load_timers():
@@ -39,7 +24,7 @@ def load_timers():
 	from src.app.timer.timer import Timer
 	
 	# Récupère les minuteurs depuis la base de données
-	data = db.all()
+	data = DB_TIMER.all()
 	
 	# Si la base de données est vide, on retourne des minuteurs de base
 	if not data:
@@ -70,20 +55,19 @@ def save_timers(timers):
 	"""
 	
 	# Supprime la base de données précédente
-	db.truncate()
+	DB_TIMER.truncate()
 	
 	# Sauvegarde les minuteurs dans la base de données
 	for timer in timers:
 		timer.reset()
 		print(timer)
-		db.insert(timer.__dict__)
+		DB_TIMER.insert(timer.__dict__)
 ##
 
 
 #
 def default_timers():
-	"""
-		Retourne une liste de Timer par défaut
+	""" Retourne une liste de Timer par défaut
 			> Lorsque la base de données n'en contenait aucun
 	"""
 	
@@ -92,27 +76,34 @@ def default_timers():
 	# Création d'une liste de 3 timers par défaut
 	default_timers = [
 		{"title": "Temps de travail",
-		 "message": "La pause est terminée",
-		 "timer": 45 * 60},
+		 "message": "La pause est terminée.",
+		 "timer": 45 * 60,  # 45 * 60
+		 "number_rings": 5,
+		 "interval": 30},
 		
 		{"title": "Temps de jeu",
-		 "message": "Le temps de jeu est terminé",
-		 "timer": 30 * 60},
+		 "message": "La partie est fini !",
+		 "timer": 30 * 60,  # 30 * 60
+		 "number_rings": 1,
+		 "interval": 60},
 		
 		{"title": "Cuisson des pâtes",
-		 "message": "Les pâtes sont cuites",
-		 "timer": 10 * 60}
+		 "message": "Les pâtes sont cuites !",
+		 "timer": 10 * 60,  # 10 * 60
+		 "number_rings": 8,
+		 "interval": 15}
 	]
-	# Création des timers
-	timers = [Timer(**timer) for timer in default_timers]
-	return timers
+	
+	# Retourne-les timers
+	return [Timer(**timer) for timer in default_timers]
 ##
 
 
 #
 def new_date(seconds: int | float | timedelta = 10) -> datetime:
-	"""
-	Calcule une nouvelle date en ajoutant un nombre spécifié de secondes à l'heure actuelle ou retourne l'heure actuelle.
+	""" Calcule une nouvelle date
+	
+	- Ajoute un nombre spécifié de secondes à l'heure actuelle pour créer la nouvelle date.
 
 	Args:
 		- seconds (int, float, timedelta): Le nombre de secondes
@@ -135,54 +126,12 @@ def new_date(seconds: int | float | timedelta = 10) -> datetime:
 	current_time = datetime.now()
 	
 	if isinstance(seconds, float):
-		microseconds = get_microseconds(seconds)
-		seconds = int(seconds)
-		date = current_time + timedelta(seconds=seconds, microseconds=microseconds)
-		return date
+		return current_time + timedelta(seconds=seconds)
+	
 	if isinstance(seconds, timedelta):
-		date = current_time + seconds
-		return date
-	
-	date = current_time + timedelta(seconds=seconds)
-	return date
+		return current_time + seconds
 
-
-def get_microseconds(seconds: float) -> int:
-	""" Récupère les microsecondes d'un nombre de secondes en float
-	
-	- Permet à la fonction new_date d'accepter les float.
-	
-	Args:
-		seconds (float): Le nombre de secondes en float.
-		
-	Returns:
-		int: Les microsecondes du nombre de secondes en int.
-	"""
-	
-	# Converti les microsecondes en string
-	seconds_str = str(seconds)
-	microseconds = ""
-	
-	# Vérifie si un point se trouve bien dans le float
-	if "." in seconds_str:
-		point = False  # Permet de savoir si on a atteint le point
-		
-		for char in seconds_str:
-			if point:
-				microseconds += char
-				continue
-			
-			if char == ".":
-				point = True
-				continue
-			print(microseconds)
-			
-		
-		# Récupère les microsecondes
-		microseconds = microseconds[:6]
-		
-		# Retourne les microsecondes en int
-		return int(microseconds)
+	return current_time + timedelta(seconds=seconds)
 
 
 if __name__ == '__main__':
@@ -191,47 +140,20 @@ if __name__ == '__main__':
 	# Test new_date
 	# date = new_date(2000000)
 	# print(datetime.now(), date, sep="\n")
-	
-	# -- Test de création de date avec un float -- #
-	
-	# Création d'un float
-	mon_float = 12.484568
-	#
-	# # Récupère les microsecondes
-	# microseconds = get_microseconds(mon_float)
-	#
-	# # Création d'un time delta avec microsecondes
-	# duration = timedelta(seconds=int(mon_float), microseconds=microseconds)
-	#
-	# # Résultat
-	# print(f"microseconds = {microseconds}",
-	#       f"duration = {duration}",
-	#       sep="\n",
-	#       )
-	#
-	# now = datetime.now()
-	# new = now + timedelta(seconds=mon_float, microseconds=microseconds)
-	# print(now, new, sep="\n")
-	
-	# Test maintenant que la méthode accepte les float
-	new = new_date(mon_float)
-	
-	now = datetime.now()
-	print(now, new, sep="\n")
 	# endregion
 	
 	
 	# region Test de sauvegarde d'un timer
 	from app.timer.timer import Timer
 	
-	timers = default_timers()
-	
-	# Test de la sauvegarde
-	save_timers(timers)
+	# timers = default_timers()
 	#
-	# Test du chargement
-	timers = load_timers()
-	print(timers)
+	# # Test de la sauvegarde
+	# save_timers(timers)
+	# #
+	# # Test du chargement
+	# timers = load_timers()
+	# print(timers)
 	
 	
 
