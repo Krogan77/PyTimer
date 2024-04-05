@@ -47,7 +47,6 @@ class MainWindow(QMainWindow):
 		# Création de l'icône de la barre système
 		self.create_tray_icon()
 		
-		
 		# Création des éléments de l'interface
 		self.set_variables()
 		self.setup_ui()

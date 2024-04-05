@@ -60,7 +60,6 @@ def save_timers(timers):
 	# Sauvegarde les minuteurs dans la base de données
 	for timer in timers:
 		timer.reset()
-		print(timer)
 		DB_TIMER.insert(timer.__dict__)
 ##
 

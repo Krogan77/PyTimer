@@ -13,7 +13,8 @@ Vue des timers
 
 
 from PySide6.QtCore import QTimer
-from PySide6.QtWidgets import QWidget, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton, QHBoxLayout
+from PySide6.QtWidgets import QWidget, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton, QHBoxLayout, \
+	QAbstractItemView
 
 from app.timer.timer_dialog import TimerDialog
 from app.timer.timer_widget import TimerWidget
@@ -66,6 +67,11 @@ class TimerView(QWidget):
 		self.lst_timer = QListWidget()
 		self.lst_timer.setMinimumWidth(400)
 		self.vlayout.addWidget(self.lst_timer)
+		
+		self.lst_timer.setDragDropMode(QAbstractItemView.InternalMove)
+		self.lst_timer.setAcceptDrops(True)
+		self.lst_timer.setDragEnabled(True)
+		self.lst_timer.setDropIndicatorShown(True)
 	##
 	
 	#
@@ -282,6 +288,4 @@ class TimerView(QWidget):
 		save_timers(self.timers)
 		pass
 	##
-	
-	#
 #
