@@ -482,7 +482,9 @@ class TimerDialog(QDialog):
 			self.timer.message = message
 			self.timer.timer = self.spn_duration
 			self.timer.number_rings = number_rings
+			self.timer.check_number_rings()
 			self.timer.interval = interval
+			self.timer.check_times_between_rings()
 			
 		# Accepte le formulaire et le ferme
 		super().accept()

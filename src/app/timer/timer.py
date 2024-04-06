@@ -46,7 +46,7 @@ class Timer:
 	# Date de fin du timer
 	_end_date: Optional[datetime] = None
 	
-	# Date utilisée pour la prochaine notification lorsque le timer après que le timer a dépassé sa date de fin.
+	# Date utilisée pour la prochaine notification après que le timer a dépassé sa date de fin.
 	notif_date: Optional[datetime] = None
 	
 	# État du timer
@@ -143,7 +143,7 @@ class Timer:
 	#
 	def check_number_rings(self):
 		""" Vérifie que le nombre de sonneries est valide """
-		if self.number_rings > self._number_rings:
+		if self.number_rings != self._number_rings:
 			self._number_rings = self.number_rings
 	##
 	
@@ -215,7 +215,7 @@ class Timer:
 			# Calcul du temps restant avant la prochaine sonnerie
 			timeleft_notif = self.notif_date - now
 			
-			# Si la date de fin est dépassée, déclenche une notification
+			# Si la date est dépassée, déclenche une notification
 			if timeleft_notif.total_seconds() < 0:
 				self.remaining = True
 				# Calcul des secondes écoulées depuis la date de fin
