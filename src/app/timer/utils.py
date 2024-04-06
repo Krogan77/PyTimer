@@ -74,11 +74,11 @@ def default_timers():
 	
 	# Création d'une liste de 3 timers par défaut
 	default_timers = [
-		{"title": "Temps de travail",
-		 "message": "La pause est terminée.",
-		 "timer": 45 * 60,  # 45 * 60
-		 "number_rings": 5,
-		 "interval": 30},
+		{"title": "Cuisson des pâtes",
+		 "message": "Les pâtes sont cuites !",
+		 "timer": 10 * 60,  # 10 * 60
+		 "number_rings": 8,
+		 "interval": 15},
 		
 		{"title": "Temps de jeu",
 		 "message": "La partie est fini !",
@@ -86,11 +86,11 @@ def default_timers():
 		 "number_rings": 1,
 		 "interval": 60},
 		
-		{"title": "Cuisson des pâtes",
-		 "message": "Les pâtes sont cuites !",
-		 "timer": 10 * 60,  # 10 * 60
-		 "number_rings": 8,
-		 "interval": 15}
+		{"title": "Temps de travail",
+		 "message": "La pause est terminée.",
+		 "timer": 45 * 60,  # 45 * 60
+		 "number_rings": 5,
+		 "interval": 30}
 	]
 	
 	# Retourne-les timers

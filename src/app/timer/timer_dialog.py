@@ -26,11 +26,12 @@ class TimerDialog(QDialog):
 	"""
 	def __init__(self, parent=None, timer=None):
 		super().__init__(parent)
+		
 		self.timer = timer
 		self.parent = parent
 		
 		# Set le titre de la fenêtre avec le mode qui
-		# sera vérifié plus tard pour savoir si on doit renvoyer le timer fourni
+		# sera vérifié plus tard pour savoir si on doit en créer un nouveau ou modifier le timer fourni
 		self.window_title = "Création"
 		self.setWindowTitle(self.window_title)
 		

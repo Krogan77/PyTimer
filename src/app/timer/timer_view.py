@@ -162,7 +162,7 @@ class TimerView(QWidget):
 		
 		# Ajout du widget à la liste
 		self.item.setSizeHint(self.timer_widget.sizeHint())
-		self.lst_timer.insertItem(0, self.item)
+		self.lst_timer.addItem(self.item)
 		self.lst_timer.setItemWidget(self.item, self.timer_widget)
 		
 	
