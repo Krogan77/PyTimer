@@ -18,6 +18,11 @@ from src.utils import dbg
 
 font_weight = "font-weight: 750;"
 
+icon_play = "src/app/timer/icons/icon_play"
+icon_break = "src/app/timer/icons/icon_pause"
+icon_reset = "src/app/timer/icons/icon_reset"
+icon_modify = "src/app/timer/icons/icon_modify"
+
 
 class TimerWidget(QWidget):
 	""" Classe TimerWidget
@@ -50,7 +55,7 @@ class TimerWidget(QWidget):
 		
 		# Bouton start
 		self.btn_play = QPushButton()
-		self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
+		self.btn_play.setIcon(QIcon(icon_play))
 		self.hlayout.addWidget(self.btn_play)
 		
 		self.vlayout = QVBoxLayout()
@@ -74,11 +79,11 @@ class TimerWidget(QWidget):
 		
 		# Boutons reset et modifier
 		self.btn_reset = QPushButton()
-		self.btn_reset.setIcon(QIcon("lib/icons/icon_reset"))
+		self.btn_reset.setIcon(QIcon(icon_reset))
 		self.hlayout.addWidget(self.btn_reset)
 		
 		self.btn_modify = QPushButton()
-		self.btn_modify.setIcon(QIcon("lib/icons/icon_modify"))
+		self.btn_modify.setIcon(QIcon(icon_modify))
 		self.hlayout.addWidget(self.btn_modify)
 	
 	#
@@ -223,7 +228,7 @@ class TimerWidget(QWidget):
 		self.lb_end_date.setText(f"🔔 {str(self.timer.end_date)}")  # Date de fin
 		
 		# Modification du style du bouton play et de la durée restante
-		self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
+		self.btn_play.setIcon(QIcon(icon_play))
 		self.lb_timeleft.setStyleSheet(f"QLabel {{color: white;{font_weight}}}")
 		self.check_color = False
 	##
@@ -234,11 +239,11 @@ class TimerWidget(QWidget):
 		
 		# Si le timer est en cours, icon stop
 		if self.timer.running:
-			self.btn_play.setIcon(QIcon("lib/icons/icon_break"))
+			self.btn_play.setIcon(QIcon(icon_break))
 			
 		# Si le timer est terminée ou en pause, icon start
 		else:
-			self.btn_play.setIcon(QIcon("lib/icons/icon_play"))
+			self.btn_play.setIcon(QIcon(icon_play))
 	##
 #
 	

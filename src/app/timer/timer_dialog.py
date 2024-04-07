@@ -12,7 +12,7 @@ from datetime import timedelta
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QSpinBox, \
-	QDialogButtonBox
+	QDialogButtonBox, QSizePolicy
 
 from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE, MAX_RINGS, MAX_INTERVAL
 from app.timer.timer import Timer
@@ -26,6 +26,8 @@ class TimerDialog(QDialog):
 	"""
 	def __init__(self, parent=None, timer=None):
 		super().__init__(parent)
+		
+		self.resize(300, 300)
 		
 		self.timer = timer
 		self.parent = parent
@@ -156,7 +158,8 @@ class TimerDialog(QDialog):
 				
 				QTextEdit {
 					border-radius: 5px;
-					border: 2px solid black;
+					border: 1px solid black;
+					min-height: 65px;
 				}
 				
 				QDialogButtonBox > QPushButton {
