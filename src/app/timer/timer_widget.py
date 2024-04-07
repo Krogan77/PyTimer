@@ -19,7 +19,7 @@ from src.utils import dbg
 font_weight = "font-weight: 750;"
 
 icon_play = "src/app/timer/icons/icon_play"
-icon_break = "src/app/timer/icons/icon_pause"
+icon_break = "src/app/timer/icons/icon_break"
 icon_reset = "src/app/timer/icons/icon_reset"
 icon_modify = "src/app/timer/icons/icon_modify"
 
