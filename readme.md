@@ -1,10 +1,10 @@
 
 # Pytimer
 
-## Pytimer est une application de minuteurs personnalisables.
+## Pytimer is a customizable timer application.
 
 ### Description :
-Pytimer vous permet de créer et de gérer plusieurs minuteurs, chacun pouvant déclencher des notifications. Vous pouvez personnaliser le message et la durée des notifications pour que les minuteurs sonnent à plusieurs reprises si nécessaire. Une fois activé, chaque minuteur affiche non seulement le temps restant, mais aussi l'heure à laquelle il devrait se terminer.
+Pytimer lets you create and manage multiple timers, each of which can trigger notifications. You can customize the message and duration of notifications, so that timers ring repeatedly when needed. Once activated, each timer displays not only the time remaining, but also the time at which it should end.
 
 
 ***
