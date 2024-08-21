@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-# Permet d'utiliser les accents dans le code
 
 """ Fenêtre d'options de l'application """
+
 
 # ----  IMPORTS  ---- #
 
@@ -13,7 +12,7 @@ from PySide6.QtWidgets import QDialog, QComboBox, QVBoxLayout, QLabel, QPushButt
 from utils import set_stylesheet, base_config
 
 
-class OptionDialog(QDialog):
+class SettingsDialog(QDialog):
 	""" Fenêtre de configuration de l'application """
 	
 	def __init__(self, parent=None):

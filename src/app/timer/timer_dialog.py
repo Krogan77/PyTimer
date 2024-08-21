@@ -4,7 +4,7 @@
 
 """ Classe TimerDialog
 
-Permet la création et la modification d'un mminuteur.
+Permet la création et la modification d'un minuteur.
 """
 
 # Imports :
@@ -12,11 +12,10 @@ from datetime import timedelta
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QHBoxLayout, QVBoxLayout, QLabel, QLineEdit, QTextEdit, QSpinBox, \
-	QDialogButtonBox, QSizePolicy
+	QDialogButtonBox
 
 from app.timer.config import MAX_CHAR_NAME, MAX_CHAR_MESSAGE, MAX_RINGS, MAX_INTERVAL
 from app.timer.timer import Timer
-from src.utils import dbg
 
 
 class TimerDialog(QDialog):

@@ -25,8 +25,9 @@ from src.utils import dbg
 
 class TimerView(QWidget):
 	""" Gestion de la vue des timers """
-	def __init__(self):
+	def __init__(self, main_window=None):
 		super().__init__()
+		self.main_window = main_window
 		
 		# Création des éléments de l'interface
 		# self.set_variables()
@@ -53,12 +54,12 @@ class TimerView(QWidget):
 		self.vlayout.addLayout(self.hlayout)
 		
 		# Bouton de création de timer
-		self.btn_new_timer = QPushButton("Nouveau")
+		self.btn_new_timer = QPushButton("New")
 		self.btn_new_timer.setFixedWidth(150)
 		self.hlayout.addWidget(self.btn_new_timer)
 		
 		# Bouton de suppression de timer
-		self.btn_delete_timer = QPushButton("Supprimer")
+		self.btn_delete_timer = QPushButton("Delete")
 		self.btn_delete_timer.setEnabled(False)
 		self.btn_delete_timer.setFixedWidth(150)
 		self.hlayout.addWidget(self.btn_delete_timer)
@@ -155,7 +156,7 @@ class TimerView(QWidget):
 		
 		# Création du widget
 		self.item = QListWidgetItem()
-		self.timer_widget = TimerWidget(parent=self, timer=timer)
+		self.timer_widget = TimerWidget(parent=self, timer=timer, main_window=self.main_window)
 		
 		# Connexion du signal de modification
 		self.timer_widget.submit_timer.connect(self.create_timer)

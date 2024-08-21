@@ -334,7 +334,7 @@ def send_notify(title, message):
 #
 if __name__ == '__main__':
 	
-	# Test
+	# Test temporaire
 	timer = Timer(title="gtrxd",
 	              message="notification",
 	              timer=16058,
@@ -362,25 +362,6 @@ if __name__ == '__main__':
 		
 		# On affiche le temps restant
 		dbg("Test du calcul du temps restant : \n", timer._timeleft, "\n")
-	
-	
-	# -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-	# Test de création d'une date et du calcul du timedelta.
-
-	# time_left = new_date(20) - datetime.now()
-	# dbg(time_left, type(time_left), "\n")
-	# dbg(new_date(time_left))
-	# >
-	
-
-	# -- -- -- -- -- -- -- -- -- -- -- -- -- --
-	# Test de calcul avec un timedelta négatif
-
-	# time_left = new_date(-20) - datetime.now()
-	# dbg(time_left, type(time_left), "\n")
-	#
-	# # conversion en secondes
-	# dbg(time_left.total_seconds())
 	
 	#
 	pass

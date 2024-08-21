@@ -26,15 +26,15 @@ def check_work_path():
 	Permet de vérifier le chemin du projet.
 	> Lorsque l'application se lance
 
-	- Cela sert à vérifier si on est sur l'emplacement de travail de l'application.
+	- Cela sert à vérifier si on est sur l'emplacement de travail ou d'utilisation de l'application.
 	-
 	"""
-	expected_path = r"C:\Users\yoann\code\PycharmProjects\2.Project\Project-Perso\PyTimer"
+	
 	# Normalisation des chemins pour s'assurer qu'ils sont comparables
 	cur_dir_normalized = os.path.normcase(os.path.normpath(CUR_DIR))
-	expected_path_normalized = os.path.normcase(os.path.normpath(expected_path))
 	
-	return cur_dir_normalized == expected_path_normalized
+	# Retourne la vérification de l'emplacement de l'application
+	return "PycharmProjects" not in cur_dir_normalized
 ##
 
 
@@ -47,7 +47,8 @@ def get_db():
 	return db
 
 
-# Configuration de base attendue dans le fichier de config_backup
+# Configuration de base attendue dans le fichier config-backup
+# qui est utilisée si elle n'existe pas déjà.
 base_config = {
 	"style": "Combinear",
 	"save_pos": False,
@@ -145,7 +146,7 @@ def config_log(filepath, level, date: bool = False):
 	if date:
 		form = f"{"-" * 30}" + "\n%(asctime)s : %(levelname)s : \n%(message)s\n"
 	else:
-		form = " %(levelname)s : %(message)s\n" + f"{"-" * 30}"
+		form = " %(levelname)s : %(message)s\n" + f"{'-' * 30}"
 	
 	logging.basicConfig(
 		level=level,
@@ -179,21 +180,3 @@ def dbg(*args, sep=" ", end="\n"):
 	if LOG:
 		formated_args = sep.join([str(arg) for arg in args])
 		LOG(formated_args)
-
-
-
-if __name__ == '__main__':
-	print(CUR_DIR)
-	
-	# print("Test de création d'un fichier de log :")
-	# create_log_file()
-	
-	# dbg("Test debug log")
-	# dbg("Test debug log")
-	
-	# Test check_pass()
-	# print(CUR_DIR)
-	# print(check_work_path())
-	
-	#
-	pass

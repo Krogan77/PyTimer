@@ -1,12 +1,12 @@
 
 
 """ Fenêtre principale de l'application """
-from PySide6.QtCore import QEvent, Qt
+from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QSystemTrayIcon, QVBoxLayout, QWidget, QApplication
 
-from utils import check_work_path, create_log_file, dbg, save_config_backup
-from window.options_dialog import OptionDialog
+from utils import check_work_path, dbg, save_config_backup
+from window.settings_dialog import SettingsDialog
 from app.timer.timer_view import TimerView
 
 # Vérifie l'emplacement de l'application pour différencier les icônes
@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
 		self.setWindowTitle('PyTimer')
 		self.setMinimumSize(450, 288)
 		
-		create_log_file()
+		# create_log_file()
 			
 		self.setWindowIcon(QIcon(f"lib/icons/{window_icon}.png"))
 		
@@ -58,7 +58,7 @@ class MainWindow(QMainWindow):
 	#
 	def set_variables(self):
 		""" Définition des variables de l'application """
-		self.options_dialog = OptionDialog(parent=self)
+		self.options_dialog = SettingsDialog(parent=self)
 		
 		pass
 	##
@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
 		self.layout = QVBoxLayout()
 		self.central.setLayout(self.layout)
 		
-		self.timer_view = TimerView()
+		self.timer_view = TimerView(main_window=self)
 		self.layout.addWidget(self.timer_view)
 		
 		pass
@@ -105,7 +105,7 @@ class MainWindow(QMainWindow):
 		self.act_close = self.menu_file.addAction("Exit")
 		
 		# Menu Options
-		self.act_options = self.menu_bar.addAction("Options")
+		self.act_options = self.menu_file.addAction("Options")
 		self.act_options.setIcon(QIcon("lib/icons/opt.png"))
 	##
 	
@@ -193,7 +193,6 @@ class MainWindow(QMainWindow):
 		
 		# Fermeture de la vue des timers
 		self.timer_view.close()
-		
 		
 		if self.config["save_pos"]:
 			self.config["geox"], self.config["geoy"] = self.pos().x(), self.pos().y()

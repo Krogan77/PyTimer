@@ -14,8 +14,6 @@ from PySide6.QtCore import QSize, Signal, Slot
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QHBoxLayout, QPushButton
 
-from src.utils import dbg
-
 font_weight = "font-weight: 750;"
 
 icon_play = "src/app/timer/icons/icon_play"
@@ -33,11 +31,11 @@ class TimerWidget(QWidget):
 	# Signal pour envoyer le timer à modifier
 	submit_timer = Signal(object, object)
 	
-	def __init__(self, timer=None, parent=None):
+	def __init__(self, timer=None, parent=None, main_window=None):
 		super().__init__()
 		self.timer = timer
 		self.parent = parent
-		
+		self.main_window = main_window
 		
 		# Création des éléments de l'interface
 		self.setup_ui()
@@ -164,7 +162,7 @@ class TimerWidget(QWidget):
 		
 		- S'il est en cours, il sera stopper et pourra être relancé.
 		
-		- S'il est en cours et terminé, il sera stoppé et réinitialisé.
+		- S'il est en cours et terminé, il sera arrêter et réinitialisé.
 		"""
 		
 		if self.timer.remaining:
@@ -229,7 +227,9 @@ class TimerWidget(QWidget):
 		
 		# Modification du style du bouton play et de la durée restante
 		self.btn_play.setIcon(QIcon(icon_play))
-		self.lb_timeleft.setStyleSheet(f"QLabel {{color: white;{font_weight}}}")
+		style = self.main_window.config["style"]
+		color = "white" if style in ["Combinear", "Diffnes", "Takezo"] else "black"
+		self.lb_timeleft.setStyleSheet(f"QLabel {{color: {color};{font_weight}}}")
 		self.check_color = False
 	##
 	
