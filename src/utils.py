@@ -5,9 +5,18 @@ from tinydb import TinyDB
 
 from pathlib import Path
 import logging
-import os
 
 from settings import CONSOLE_DEBUG, LOG
+
+
+# Project folder path
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+
+# Retrieves project path in string format
+PROJECT_PATH = str(Path(PROJECT_DIR))
+
+# Retrieves the project name at the end of the path after the last slash
+PROJECT_NAME = PROJECT_PATH[PROJECT_PATH.rfind("\\") + 1:]
 
 # Chemin du dossier du projet
 CUR_DIR = Path(__file__).resolve().parent.parent
@@ -22,20 +31,16 @@ config_backup_file = data_dir / "config_backup.json"
 
 
 def check_work_path():
-	"""
-	Permet de vérifier le chemin du projet.
-	> Lorsque l'application se lance
+	""" Check application location to differentiate icons.
+	> When the application is launched
 
-	- Cela sert à vérifier si on est sur l'emplacement de travail ou d'utilisation de l'application.
-	-
+	- It checks that you are on the application's working site.
 	"""
+	# Expected path with project name at end
+	work_path = f"C:\\Users\\yoann\\code\\PycharmProjects\\Project-Perso\\{PROJECT_NAME}"
 	
-	# Normalisation des chemins pour s'assurer qu'ils sont comparables
-	cur_dir_normalized = os.path.normcase(os.path.normpath(CUR_DIR))
-	
-	# Retourne la vérification de l'emplacement de l'application
-	return "PycharmProjects" not in cur_dir_normalized
-##
+	# Returns True if the expected path is equal to the working project path
+	return work_path == PROJECT_PATH
 
 
 def get_db():
