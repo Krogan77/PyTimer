@@ -4,7 +4,7 @@
 ## Pytimer is a customizable timer application.
 
 ### Description :
-Pytimer lets you create and manage multiple timers, each of which can trigger notifications. You can customize the message and duration of notifications, so that timers sound repeatedly when needed. Once activated, each timer displays not only the time remaining, but also the time at which it is due to end. Default timers are created if none exist when the application is opened.Pytimer lets you create and manage multiple timers, each of which can trigger notifications. You can customize the message and duration of notifications, so that timers sound repeatedly when needed. Once activated, each timer displays not only the time remaining, but also the time at which it is due to end. Default timers are created if none exist when the application is opened.
+Pytimer lets you create and manage multiple timers, each of which can trigger notifications. You can customize the message and duration of notifications, so that timers sound repeatedly when needed. Once activated, each timer displays not only the time remaining, but also the time at which it is due to end. Default timers are created if none exist when the application is opened.
 
 ***
 ### Overview :
