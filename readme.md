@@ -4,8 +4,7 @@
 ## Pytimer is a customizable timer application.
 
 ### Description :
-Pytimer lets you create and manage multiple timers, each of which can trigger notifications. You can customize the message and duration of notifications, so that timers ring repeatedly when needed. Once activated, each timer displays not only the time remaining, but also the time at which it should end.
-
+Pytimer lets you create and manage multiple timers, each of which can trigger notifications. You can customize the message and duration of notifications, so that timers sound repeatedly when needed. Once activated, each timer displays not only the time remaining, but also the time at which it is due to end. Default timers are created if none exist when the application is opened.Pytimer lets you create and manage multiple timers, each of which can trigger notifications. You can customize the message and duration of notifications, so that timers sound repeatedly when needed. Once activated, each timer displays not only the time remaining, but also the time at which it is due to end. Default timers are created if none exist when the application is opened.
 
 ***
 ### Overview :
@@ -54,8 +53,7 @@ https://icons8.com
 ## Pytimer est une application de minuterie personnalisable.
 
 ### Déscription :
-Pytimer vous permet de créer et de gérer plusieurs minuteries, chacune pouvant déclencher des notifications. Vous pouvez personnaliser le message et la durée des notifications, de sorte que les minuteries sonnent de manière répétée lorsque cela est nécessaire. Une fois activé, chaque minuteur affiche non seulement le temps restant, mais aussi l'heure à laquelle il doit se terminer.
-
+Pytimer vous permet de créer et de gérer plusieurs minuteries, chacune pouvant déclencher des notifications. Vous pouvez personnaliser le message et la durée des notifications, de sorte que les minuteries sonnent de manière répétée lorsque cela est nécessaire. Une fois activé, chaque minuteur affiche non seulement le temps restant, mais aussi l'heure à laquelle il doit se terminer. Des minuteurs par défaut sont créée si aucun n'existe à l'ouverture de l'application.
 
 ***
 ### Vue d'ensemble :
