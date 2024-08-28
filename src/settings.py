@@ -1,18 +1,12 @@
 
 """ settings.py :
-
-Configuration générale du programme
-
+General program settings
 """
 
-
-# Imports
-import logging
-
 CONSOLE_DEBUG = True
-# Active ou Désactive tous les debugs du programme,
-# il est toujours possible de les activer/désactiver individuellement.
+# Enables or disables all program debugs,
+# they can still be activated/deactivated individually.
 
-# Niveau de debug du programme
-# - None : aucun debug
+# Program debug level
+# - None: no debugging
 LOG = None

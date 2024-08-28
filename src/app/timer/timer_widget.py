@@ -1,12 +1,6 @@
 
-# -*- coding: utf-8 -*-
-# Permet d'utiliser les accents dans le code
-
-
-""" Classe TimerWidget
-
-Permet d'afficher un timer.
-    
+""" TimerWidget class
+File containing the TimerWidget class for displaying a timer in the list.
 """
 
 
@@ -23,12 +17,11 @@ icon_modify = "src/app/timer/icons/icon_modify"
 
 
 class TimerWidget(QWidget):
-	""" Classe TimerWidget
-
-	Permet d'afficher un timer.
+	""" TimerWidget class
+	Displays a timer.
 	"""
 	
-	# Signal pour envoyer le timer à modifier
+	# Signal to send the timer to be modified
 	submit_timer = Signal(object, object)
 	
 	def __init__(self, timer=None, parent=None, main_window=None):
@@ -37,7 +30,7 @@ class TimerWidget(QWidget):
 		self.parent = parent
 		self.main_window = main_window
 		
-		# Création des éléments de l'interface
+		# Creating interface elements
 		self.setup_ui()
 		self.set_style()
 		self.setup_connections()
@@ -46,12 +39,13 @@ class TimerWidget(QWidget):
 	##
 		
 	def setup_ui(self):
-		""" Configuration de l'interface """
+		""" Interface configuration
+		"""
 		
 		self.hlayout = QHBoxLayout()
 		self.setLayout(self.hlayout)
 		
-		# Bouton start
+		# Start button
 		self.btn_play = QPushButton()
 		self.btn_play.setIcon(QIcon(icon_play))
 		self.hlayout.addWidget(self.btn_play)
@@ -59,7 +53,7 @@ class TimerWidget(QWidget):
 		self.vlayout = QVBoxLayout()
 		self.hlayout.addLayout(self.vlayout)
 		
-		# Infos timer
+		# Timer info
 		self.lb_title = QLabel(self.timer.title)
 		self.vlayout.addWidget(self.lb_title)
 		
@@ -75,7 +69,7 @@ class TimerWidget(QWidget):
 		self.lb_end_date = QLabel(f"🔔 {str(self.timer.end_date)}")
 		self.vlayout_time.addWidget(self.lb_end_date)
 		
-		# Boutons reset et modifier
+		# Reset and modify buttons
 		self.btn_reset = QPushButton()
 		self.btn_reset.setIcon(QIcon(icon_reset))
 		self.hlayout.addWidget(self.btn_reset)
@@ -86,7 +80,8 @@ class TimerWidget(QWidget):
 	
 	#
 	def set_style(self):
-		""" Modification du style """
+		""" Style modification
+		"""
 		
 		self.setStyleSheet("""
 			* {
@@ -116,7 +111,7 @@ class TimerWidget(QWidget):
 		self.lb_title.setStyleSheet(f"QLabel {{{font_weight}}}")
 		self.lb_timeleft.setStyleSheet(f"QLabel {{{font_weight}}}")
 		
-		# Modification de la taille des boutons
+		# Change button size
 		icon_size = 24
 		button_size = 38
 		
@@ -131,7 +126,8 @@ class TimerWidget(QWidget):
 	
 	#
 	def setup_connections(self):
-		""" Création des connecions entre les widgets """
+		""" Creating connections between widgets
+		"""
 		
 		self.btn_play.clicked.connect(self.start_timer)
 		
@@ -142,7 +138,8 @@ class TimerWidget(QWidget):
 	
 	#
 	def set_default_values(self):
-		""" Définition des valeurs par défaut """
+		""" Setting default values
+		"""
 		self.check_color = False
 		pass
 	##
@@ -150,82 +147,84 @@ class TimerWidget(QWidget):
 	#
 	@Slot()
 	def modify_timer(self):
-		""" Envoi le signal du bouton de modification """
+		""" Sends signal from change button
+		"""
 		self.submit_timer.emit(self.timer, self)
 	##
 	
 	#
 	def start_timer(self):
-		""" Démarre, arrête ou reset le timer
+		""" Starts, stops or resets the timer
 		
-		- Si le timer est inactif, il sera lancé
+		- If the timer is inactive, it will be started.
 		
-		- S'il est en cours, il sera stopper et pourra être relancé.
+		- If in progress, it will be stopped and can be restarted.
 		
-		- S'il est en cours et terminé, il sera arrêter et réinitialisé.
+		- If it is running and finished, it will be stopped and reset.
 		"""
 		
 		if self.timer.remaining:
 			if self.timer.running:
-				# Si le timer est en cours, mais a dépassé sa date de fin, on le stop
+				# If the timer is running but has passed its end date, it is stopped.
 				self.timer.stop_timer()
 				self.btn_play.setIcon(QIcon("lib/icons/icon_reset"))
 				return
 			
-			# Si le timer est terminé, et déjà stoppé, on le réinitialise
+			# If the timer has ended and already stopped, it is reset.
 			self.reset_timer()
 			return
 		
-		# Si le timer est inactif ou en pause, on le démarre
+		# If the timer is inactive or paused, start it.
 		self.timer.start_timer()
 		
-		# Affichage de la date de fin
+		# End date display
 		self.lb_end_date.setText(f"🔔{str(self.timer.end_date)}")
 		
-		# Modification du style du bouton et de la durée restante
+		# Change button style and remaining time
 		self.set_style_btn_start()
 		self.lb_timeleft.setStyleSheet(f"QLabel {{color: green;{font_weight}}}")
 	##
 	
 	#
 	def update_timeleft(self):
-		""" Mise à jour de l'affichage du temps restant si le timer est en cours """
+		""" Update remaining time display if timer is running
+		"""
 		
-		# Modification de la durée restante
+		# Change remaining time
 		if self.timer.running:
 			self.lb_timeleft.setText(f"⌛ {str(self.timer.set_timeleft(_format=True))}")
 			
-			# Vérifie si la date de fin est atteinte et modifie la couleur du texte
+			# Checks if the end date has been reached and changes the text color
 			if self.timer.remaining and not self.check_color:
 				self.lb_timeleft.setStyleSheet(f"QLabel {{color: red;{font_weight}}}")
-				# Empêche de refaire ce check à chaque mise à jour de l'affichage
+				# Prevents this check from being repeated each time the display is updated
 				self.check_color = True
 	##
 	
 	#
 	def reset_timer(self, check_duration=False):
-		""" Réinitialisation du timer
+		""" Timer reset
 		
-		- Si la durée par défaut a été modifiée, on réinitialise le timer.
-		- Si elle n'a pas été modifiée, on laisse le timer tourner.
+		- If the default time has been changed, the timer is reset.
+		- If it has not been modified, we leave the timer running.
 		"""
 		
-		# Vérifie si la durée par défaut a été modifiée
+		# Checks whether the default duration has been modified
 		if check_duration:
 			if self.lb_duration.text() == "⌚ " + self.timer.duration:
 				self.lb_title.setText(self.timer.title)
 				return
 		
-		# Réinitialise le timer
+		# Reset timer
 		self.timer.reset()
 		
-		# Mis à jour de l'affichage
-		self.lb_title.setText(self.timer.title)  # titre
-		self.lb_duration.setText(f"⌚ {self.timer.duration}")  # durée par défaut
-		self.lb_timeleft.setText(f"⌛ {str(self.timer.timeleft)}")  # durée restante avec millisec
-		self.lb_end_date.setText(f"🔔 {str(self.timer.end_date)}")  # Date de fin
+		# Display update
+		self.lb_title.setText(self.timer.title) # title
+		self.lb_duration.setText(f"⌚ {self.timer.duration}") # default duration
+		self.lb_timeleft.setText(f"⌛ {str(self.timer.timeleft)}")  # remaining time with millisec
+		self.lb_end_date.setText(f"🔔 {str(self.timer.end_date)}")  # End date
 		
-		# Modification du style du bouton play et de la durée restante
+		# Modifying the style of the play button and remaining time
 		self.btn_play.setIcon(QIcon(icon_play))
 		style = self.main_window.config["style"]
 		color = "white" if style in ["Combinear", "Diffnes", "Takezo"] else "black"
@@ -235,15 +234,13 @@ class TimerWidget(QWidget):
 	
 	#
 	def set_style_btn_start(self):
-		""" Modification du style du bouton start """
+		""" Modifying the style of the start button
+		"""
 		
-		# Si le timer est en cours, icon stop
+		# If the timer is running, icon stop
 		if self.timer.running:
 			self.btn_play.setIcon(QIcon(icon_break))
 			
-		# Si le timer est terminée ou en pause, icon start
+		# If the timer is finished or paused, icon start
 		else:
 			self.btn_play.setIcon(QIcon(icon_play))
-	##
-#
-	

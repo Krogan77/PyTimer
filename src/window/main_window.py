@@ -1,6 +1,7 @@
 
 
-""" Fenêtre principale de l'application """
+""" Main window of the application """
+
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QMainWindow, QSystemTrayIcon, QVBoxLayout, QWidget, QApplication
@@ -9,7 +10,7 @@ from utils import check_work_path, dbg, save_config_backup
 from window.settings_dialog import SettingsDialog
 from app.timer.timer_view import TimerView
 
-# Vérifie l'emplacement de l'application pour différencier les icônes
+# Check application location to differentiate icons
 if check_work_path():
 	window_icon = "icon_work"
 else:
@@ -20,7 +21,7 @@ class InvisibleParent(QWidget):
 	def __init__(self):
 		super().__init__()
 		
-		# Mettre le parent en tant qu'outil pour qu'il n'apparaisse pas dans la barre des tâches
+		# Set the parent as a tool so that it does not appear in the taskbar
 		self.setWindowFlags(Qt.Tool)
 	##
 ##
@@ -28,7 +29,7 @@ class InvisibleParent(QWidget):
 
 #
 class MainWindow(QMainWindow):
-	""" Fenêtre principale de l'application """
+	""" Main window of the application """
 	
 	#
 	def __init__(self, parent=None):
@@ -41,13 +42,13 @@ class MainWindow(QMainWindow):
 			
 		self.setWindowIcon(QIcon(f"lib/icons/{window_icon}.png"))
 		
-		# Récupère la sauvegarde et configure les options
-		self.set_options()
+		# Recovers backup and configures options
+		self.settings()
 		
-		# Création de l'icône de la barre système
+		# Creating the system tray icon
 		self.create_tray_icon()
 		
-		# Création des éléments de l'interface
+		# Creating interface elements
 		self.set_variables()
 		self.setup_ui()
 		self.set_style()
@@ -57,7 +58,7 @@ class MainWindow(QMainWindow):
 	
 	#
 	def set_variables(self):
-		""" Définition des variables de l'application """
+		""" Defining variables for the application """
 		self.options_dialog = SettingsDialog(parent=self)
 		
 		pass
@@ -65,9 +66,9 @@ class MainWindow(QMainWindow):
 	
 	#
 	def setup_ui(self):
-		""" Création de l'interface graphique """
+		""" Creating the graphical interface """
 		
-		# Menu Bar
+		# Bar menu
 		self.create_menu_bar()
 		
 		self.central = QWidget()
@@ -84,7 +85,7 @@ class MainWindow(QMainWindow):
 	
 	#
 	def set_style(self):
-		""" Modification du style """
+		""" Modifying the style """
 
 		self.central.setStyleSheet("""
 					* {
@@ -95,24 +96,24 @@ class MainWindow(QMainWindow):
 	
 	#
 	def create_menu_bar(self):
-		""" Création de la barre de menu """
+		""" Creating the menu bar """
 		
-		# Menu Bar
+		# Bar menu
 		self.menu_bar = self.menuBar()
 		
-		# Menu File
+		# File menu
 		self.menu_file = self.menu_bar.addMenu("File")
 		self.act_close = self.menu_file.addAction("Exit")
 		
-		# Menu Options
-		self.act_options = self.menu_file.addAction("Options")
+		# Options menu
+		self.act_options = self.menu_file.addAction("Settings")
 		self.act_options.setIcon(QIcon("lib/icons/opt.png"))
 	##
 	
 	#
 	def setup_connections(self):
-		""" Définition des connexions entre les widgets """
-		self.act_options.triggered.connect(self.open_options)
+		""" Defining connections between widgets"""
+		self.act_options.triggered.connect(self.open_settings)
 		
 		self.act_close.triggered.connect(self.close)
 		
@@ -121,51 +122,50 @@ class MainWindow(QMainWindow):
 	
 	#
 	def set_default_values(self):
-		""" Définition des valeurs par défaut des widgets """
+		""" """
 		pass
 	##
 	
 	#
-	def set_options(self):
-		""" Récupère et applique les options depuis le fichier de sauvegarde """
+	def settings(self):
+		""" Retrieves and applies options from the backup file. """
 		from utils import check_config_backup, get_config_backup, set_stylesheet
 		
 		check_config_backup()
 		
-		# Récupère les options depuis le fichier de sauvegarde
+		# Recovers options from backup file
 		self.config = get_config_backup()
 		
 		self.config["geoy"] += 30
 		
 		self.setGeometry(self.config["geox"], self.config["geoy"], self.config["geow"], self.config["geoh"])
 		
-		# Application du style CSS
+		# Applying CSS styling
 		set_stylesheet(self, f"lib/style/{self.config['style']}.qss")
 	##
 	
 	#
-	def open_options(self):
-		""" Ouvre la fenêtre des options """
+	def open_settings(self):
+		""" Opens the options window """
 		self.options_dialog.show()
 	##
 	
 	#
 	def create_tray_icon(self):
-		""" Création de l'icône système """
+		""" Creating the system icon """
 		self.tray = QSystemTrayIcon()
 		try:
 			self.tray.setIcon(QIcon(f"lib/icons/{window_icon}.png"))
 			self.tray.setVisible(True)
 			
-			# Déclenche un message de notification lors de la création de l'icône
-			# self.tray.showMessage("MyApp is running!", "Click to open window\nRight click for menu")
+		# Trigger a notification message when the icon is not created
 		except Exception:
-			dbg("Impossible de charger l'icône système.")
+			dbg("Unable to load system icon.")
 	##
 	
 	#
 	def toggle_window(self):
-		""" Affiche ou cache la fenêtre """
+		""" Shows or hides the window """
 		if self.isVisible():
 			self.setVisible(False)
 		else:
@@ -178,20 +178,10 @@ class MainWindow(QMainWindow):
 	##
 	
 	#
-	# def changeEvent(self, event):
-	# 	if event.type() == QEvent.WindowStateChange:
-	# 		if self.isMinimized():
-	# 			self.setVisible(False)
-	# 			event.ignore()  # Ignore l'événement de minimisation
-	# 		else:
-	# 			super().changeEvent(event)
-	##
-	
-	#
 	def closeEvent(self, event):
-		""" Fermeture de l'application """
+		""" Closing the application """
 		
-		# Fermeture de la vue des timers
+		# Closing the timer view
 		self.timer_view.close()
 		
 		if self.config["save_pos"]:
@@ -200,8 +190,7 @@ class MainWindow(QMainWindow):
 		
 		save_config_backup(self.config)
 		
-		
-		# Fermeture de la fenêtre parente
+		# Closing the parent window
 		QApplication.quit()
 		
 		pass

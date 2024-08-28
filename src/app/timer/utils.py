@@ -1,7 +1,6 @@
 
 """
-	Script contenant les fonctions des alarmes
-
+	Script containing useful application functions
 """
 
 from datetime import datetime, timedelta
@@ -11,34 +10,34 @@ from src.app.timer.config import DB_TIMER
 
 def load_timers():
 	"""
-	Chargement des minuteurs depuis la base de données
-		> Lors de l'ouverture de l'application timer
+	Loading timers from the database
+		> When opening the timer application
 	
-	- Récupère les minuteurs depuis la base de données.
-	- Crée les minuteurs avant de les retourner.
+	- Retrieves timers from the database.
+	- Create timers before returning them.
 	
 	Returns:
-		list: Liste des minuteurs
+		list: Timer list
 	"""
 	
 	from src.app.timer.timer import Timer
 	
-	# Récupère les minuteurs depuis la base de données
+	# Retrieves timers from database
 	data = DB_TIMER.all()
 	
-	# Si la base de données est vide, on retourne des minuteurs de base
+	# If the database is empty, basic timers are returned
 	if not data:
 		return default_timers()
 	
-	# Si des minuteurs existent déjà
+	# If timers already exist
 	else:
-		# Création des minuteurs
+		# Creating timers
 		timers = []
 		for timer in data:
 			timer = Timer(**timer)
 			timers.append(timer)
 		
-		# Retourne les minuteurs
+		# Return timers
 		return timers
 ##
 
@@ -46,18 +45,18 @@ def load_timers():
 #
 def save_timers(timers):
 	"""
-	Sauvegarde des minuteurs dans la base de données
-		> lors de la fermeture de la vue des timers
+	Saving timers in the database
+		> when closing the timer view
 	
 	Args:
 		timers : list
-			Liste des minuteurs à sauvegarder
+			List of timers to save
 	"""
 	
-	# Supprime la base de données précédente
+	# Deletes the previous database
 	DB_TIMER.truncate()
 	
-	# Sauvegarde les minuteurs dans la base de données
+	# Saves timers in database
 	for timer in timers:
 		timer.reset()
 		DB_TIMER.insert(timer.__dict__)
@@ -66,60 +65,60 @@ def save_timers(timers):
 
 #
 def default_timers():
-	""" Retourne une liste de Timer par défaut
-			> Lorsque la base de données n'en contenait aucun
+	""" Returns a list of default timers
+			> When the database contained none
 	"""
 	
 	from src.app.timer.timer import Timer
 	
-	# Création d'une liste de 3 timers par défaut
+	# Create a list of 3 default timers
 	default_timers = [
-		{"title": "Cuisson des pâtes",
-		 "message": "Les pâtes sont cuites !",
+		{"title": "Cooking",
+		 "message": "The food is ready!",
 		 "timer": 10 * 60,  # 10 * 60
 		 "number_rings": 8,
 		 "interval": 15},
 		
-		{"title": "Temps de jeu",
-		 "message": "La partie est fini !",
+		{"title": "Playing time",
+		 "message": "The game's over!",
 		 "timer": 30 * 60,  # 30 * 60
 		 "number_rings": 1,
 		 "interval": 60},
 		
-		{"title": "Temps de travail",
-		 "message": "La pause est terminée.",
+		{"title": "Working hours",
+		 "message": "The break is over.",
 		 "timer": 45 * 60,  # 45 * 60
 		 "number_rings": 5,
 		 "interval": 30}
 	]
 	
-	# Retourne-les timers
+	# Turn them over
 	return [Timer(**timer) for timer in default_timers]
 ##
 
 
 #
 def new_date(seconds: int | float | timedelta = 10) -> datetime:
-	""" Calcule une nouvelle date
+	""" Calculates a new date
 	
-	- Ajoute un nombre spécifié de secondes à l'heure actuelle pour créer la nouvelle date.
+	- Adds a specified number of seconds to the current time to create the new date.
 
 	Args:
-		- seconds (int, float, timedelta): Le nombre de secondes
-			à ajouter à l'heure actuelle pour calculer la nouvelle date.
-		- now (bool): Si True, la fonction retournera l'heure actuelle.
+		- seconds (int, float, timedelta): The number of seconds
+			à add to the current time to calculate the new date.
+		- now (bool): If True, the function will return the current time.
 
 	Returns:
-		- datetime: Date future calculée.
+		- datetime: Calculated future date.
 
-	Exemples:
-		Pour obtenir une date 20 secondes dans le futur:
+	Examples:
+		To obtain a date 20 seconds in the future:
 			>>> new_date(seconds=20)
 	
 	Notes:
-		- Il est possible de donner une valeur négative à cette fonction pour obtenir une date
-			dans le passé, puis de soustraite la date obtenue à l'heure actuelle pour
-			obtenir un timedelta négatif.
+		- This function can be given a negative value to obtain a date.
+			in the past, then subtract the date obtained from the current time
+			to obtain a negative timedelta.
 	"""
 	
 	current_time = datetime.now()
@@ -131,42 +130,3 @@ def new_date(seconds: int | float | timedelta = 10) -> datetime:
 		return current_time + seconds
 
 	return current_time + timedelta(seconds=seconds)
-
-
-if __name__ == '__main__':
-	
-	# region test date
-	# Test new_date
-	# date = new_date(2000000)
-	# print(datetime.now(), date, sep="\n")
-	# endregion
-	
-	
-	# region Test de sauvegarde d'un timer
-	from app.timer.timer import Timer
-	
-	# timers = default_timers()
-	#
-	# # Test de la sauvegarde
-	# save_timers(timers)
-	# #
-	# # Test du chargement
-	# timers = load_timers()
-	# print(timers)
-	
-	
-
-	
-	
-	
-	# endregion
-	pass
-
-
-
-
-
-
-
-
-

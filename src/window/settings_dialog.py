@@ -1,8 +1,8 @@
 
-""" Fenêtre d'options de l'application """
+""" Settings window for application """
 
 
-# ----  IMPORTS  ---- #
+# ----  IMPORTS ---- #
 
 from pathlib import Path
 
@@ -13,16 +13,16 @@ from utils import set_stylesheet, base_config
 
 
 class SettingsDialog(QDialog):
-	""" Fenêtre de configuration de l'application """
+	""" Application configuration window """
 	
 	def __init__(self, parent=None):
 		super().__init__(parent)
 		
 		self.setWindowIcon(QIcon("lib/icons/opt.png"))
-		self.setWindowTitle('Options')
-		self.setModal(True)  # Rend la fenêtre modale (bloque le reste de l'application)
+		self.setWindowTitle('Settings')
+		self.setModal(True) # Makes the window modal (blocks the rest of the application)
 		
-		# Récupère la fenêtre principale
+		# Recovers the main window
 		self.main_window = self.parent()
 		
 		self.setup_ui()
@@ -30,7 +30,7 @@ class SettingsDialog(QDialog):
 		self.set_default_values()
 	
 	def setup_ui(self):
-		""" Configure l'interface graphique """
+		""" Configures the graphical interface """
 		# Create layout and add widgets
 		self.layout = QVBoxLayout(self)
 		
@@ -43,7 +43,7 @@ class SettingsDialog(QDialog):
 		self.lb_sep = QLabel("    --------------------------------    ")
 		self.layout.addWidget(self.lb_sep)
 		
-		# Option mémoriser la position et la taille de la fenêtre
+		# Save window position and size option
 		self.label_option_position = QLabel("Window position:")
 		self.layout.addWidget(self.label_option_position)
 		
@@ -58,7 +58,7 @@ class SettingsDialog(QDialog):
 		self.option_position_layout.addWidget(self.btn_reset_pos)
 	
 	def setup_connections(self):
-		""" Connecte les signaux aux slots """
+		""" Connects signals to slots """
 		self.cbb_style.textActivated.connect(self.set_style)
 		
 		self.cb_option_position.clicked.connect(self.set_option_position)
@@ -66,28 +66,28 @@ class SettingsDialog(QDialog):
 		self.btn_reset_pos.clicked.connect(self.reset_position)
 	
 	def set_default_values(self):
-		""" Défini les valeurs par défaut des widgets """
-		# Récupère les noms des fichiers qss pour les placer dans le cbb
+		""" Set default values for widgets. """
+		# Gets qss file names and places them in the cbb
 		qss_dir = Path("lib/style").resolve()
 		qss_files = [file.stem for file in qss_dir.iterdir() if file.suffix == ".qss"]
 		self.cbb_style.addItem("Default")
 		self.cbb_style.addItems(qss_files)
 		self.cbb_style.setCurrentText(self.main_window.config['style'])
 		
-		# Active l'option de position en fonction de la config
+		# Activates position option according to config
 		self.cb_option_position.setChecked(self.main_window.config['save_pos'])
 	
 	def set_option_position(self):
-		""" Modifie l'option de sauvegarde de la position de la fenêtre """
+		""" Modifies the option to save the position of the window. """
 		self.main_window.config["save_pos"] = self.cb_option_position.isChecked()
 	
 	def reset_position(self):
-		""" Réinitialise la position de la fenêtre """
-		# Doit redonner à la fenêtre et à la config les positions trouvées dans la config de base
+		""" Resets the position of the window. """
+		# Must restore window and config to positions found in base config
 		self.main_window.setGeometry(base_config["geox"], base_config["geoy"], base_config["geow"], base_config["geoh"])
 	
 	def set_style(self):
-		""" Applique le style sélectionné """
+		""" """
 		style = self.cbb_style.currentText()
 		if style == "Default":
 			self.main_window.config['style'] = style
@@ -95,7 +95,3 @@ class SettingsDialog(QDialog):
 			return
 		self.main_window.config['style'] = style
 		set_stylesheet(self.main_window, f"lib/style/{style}.qss")
-
-#
-
-#

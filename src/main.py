@@ -1,6 +1,6 @@
 
 
-""" Point d'entrée de l'application """
+""" Entry point for the application """
 
 from PySide6.QtWidgets import QApplication
 

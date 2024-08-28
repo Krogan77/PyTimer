@@ -1,16 +1,10 @@
 
-# -*- coding: utf-8 -*-
-# Permet d'utiliser les accents dans le code
-
 """
-
     $ -- TimerView -- $
-
-Vue des timers
-
+File containing timer display view
 """
 
-
+# Imports
 
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QWidget, QListWidget, QListWidgetItem, QVBoxLayout, QPushButton, QHBoxLayout, \
@@ -20,16 +14,15 @@ from app.timer.timer_dialog import TimerDialog
 from app.timer.timer_widget import TimerWidget
 from app.timer.utils import load_timers, save_timers
 
-from src.utils import dbg
-
 
 class TimerView(QWidget):
-	""" Gestion de la vue des timers """
+	""" Timer view management
+	"""
 	def __init__(self, main_window=None):
 		super().__init__()
 		self.main_window = main_window
 		
-		# Création des éléments de l'interface
+		# Creating interface elements
 		# self.set_variables()
 		self.setup_ui()
 		self.set_style()
@@ -39,13 +32,15 @@ class TimerView(QWidget):
 	
 	#
 	def set_variables(self):
-		""" Définition des variables de la vue """
+		""" Defining view variables
+		"""
 		pass
 	##
 	
 	#
 	def setup_ui(self):
-		""" Création des éléments de l'interface """
+		""" Creating interface elements
+		"""
 		
 		self.vlayout = QVBoxLayout()
 		self.setLayout(self.vlayout)
@@ -53,18 +48,18 @@ class TimerView(QWidget):
 		self.hlayout = QHBoxLayout()
 		self.vlayout.addLayout(self.hlayout)
 		
-		# Bouton de création de timer
+		# Timer creation button
 		self.btn_new_timer = QPushButton("New")
 		self.btn_new_timer.setFixedWidth(150)
 		self.hlayout.addWidget(self.btn_new_timer)
 		
-		# Bouton de suppression de timer
+		# Delete timer button
 		self.btn_delete_timer = QPushButton("Delete")
 		self.btn_delete_timer.setEnabled(False)
 		self.btn_delete_timer.setFixedWidth(150)
 		self.hlayout.addWidget(self.btn_delete_timer)
 		
-		# Liste des timers
+		# Timer list
 		self.lst_timer = QListWidget()
 		self.lst_timer.setMinimumWidth(400)
 		self.vlayout.addWidget(self.lst_timer)
@@ -77,7 +72,8 @@ class TimerView(QWidget):
 	
 	#
 	def set_style(self):
-		""" Modification du style des éléments """
+		""" Modifying element styles
+		"""
 		
 		self.setStyleSheet("""
 			
@@ -113,29 +109,31 @@ class TimerView(QWidget):
 	
 	#
 	def setup_connections(self):
-		""" Création des connexions entre les widgets """
+		""" Creating connections between widgets
+		"""
 		self.btn_new_timer.clicked.connect(self.create_timer)
 		
-		# Connexion de la selection d'un timer dans la liste vers une méthode d'activation du bouton
+		# Connect timer selection in the list to a button activation method
 		self.lst_timer.currentItemChanged.connect(lambda: self.btn_delete_timer.setEnabled(True))
 		self.lst_timer.itemDoubleClicked.connect(self.get_timer)
 		
-		# Connexion du bouton de suppression
+		# Connecting the delete button
 		self.btn_delete_timer.clicked.connect(self.delete_timer)
 		pass
 	##
 	
 	#
 	def set_default_values(self):
-		""" Définition des valeurs par défaut """
+		""" Setting default values
+		"""
 		
-		# QTimer de l'application servant à rafraîchir les timers actifs
-		# et déclencher les notifications des minuteurs
+		# Application QTimer used to refresh active timers
+		# and trigger timer notifications
 		self.timer_refresh = QTimer()
 		self.timer_refresh.timeout.connect(self.check_timer)
-		self.timer_refresh.start(20)  # Vérifie toutes les 20 ms
+		self.timer_refresh.start(20) # Checks every 20 ms
 		
-		# Ajout des timers existants dans la liste
+		# Adding existing timers to the list
 		for timer in load_timers():
 			self.add_timer(timer)
 	##
@@ -143,92 +141,92 @@ class TimerView(QWidget):
 	#
 	def add_timer(self, timer):
 		"""
-		Création d'un nouveau timer !
-			> Déclenchée par le signal du formulaire
+		Create a new timer!
+			> Triggered by form signal
 		
-		- Récupère le timer fourni par le formulaire.
-		- Crée le widget pour le timer pour l'insérer dans la liste.
-		- Connecte le signal du bouton de modification vers la méthode correspondante.
-		- Place le timer dans son widget et l'ajoute à la liste.
+		- Retrieves the timer provided by the form.
+		- Creates the timer widget for insertion in the list.
+		- Connects the change button signal to the corresponding method.
+		- Places the timer in its widget and adds it to the list.
 		
 		:param timer: Timer
 		"""
 		
-		# Création du widget
+		# Widget creation
 		self.item = QListWidgetItem()
 		self.timer_widget = TimerWidget(parent=self, timer=timer, main_window=self.main_window)
 		
-		# Connexion du signal de modification
+		# Modification signal connection
 		self.timer_widget.submit_timer.connect(self.create_timer)
 		
-		# Ajout du widget à la liste
+		# Add widget to list
 		self.item.setSizeHint(self.timer_widget.sizeHint())
 		self.lst_timer.addItem(self.item)
 		self.lst_timer.setItemWidget(self.item, self.timer_widget)
 		
 	
 	def create_timer(self, timer=None, widget=None):
-		""" Création d'un nouveau timer
-			> Déclenchée par le bouton de création de la vue
-			> ainsi que le bouton de modification des timers
+		""" Creating a new timer
+			> Triggered by the view creation button
+			> and the timer modification button
 			
-			- Si aucun timer n'est fourni, on ouvre le formulaire de création.
-			- Si un timer est fourni par le bouton de modification, on ouvre le formulaire
-			  en fournissant les informations du timer.
-			- Ajoute ou modifie le timer existant dans la liste si l'utilisateur a validé le formulaire.
+			- If no timer is supplied, the creation form is opened.
+			- If a timer is provided by the edit button, open the form
+			  providing timer information.
+			- Adds or modifies the existing timer in the list if the user has validated the form.
 		"""
 		
-		# Mode création s'il n'y a pas de timer fourni
+		# Creation mode if no timer supplied
 		if not timer:
 			
-			# Ouvre la fenêtre de création et récupère le timer si l'utilisateur a validé
+			# Opens the creation window and retrieves the timer if the user has validated.
 			dialog = TimerDialog(self)
 			if dialog.exec():
 				timer = dialog.get_timer()
 				
-				# Ajoute le timer dans le list widget
+				# Adds the timer to the list widget
 				self.add_timer(timer)
 		
-		# Mode modification
+		# Edit mode
 		else:
 			
-			# Ouvre la fenêtre de modification et récupère le timer si l'utilisateur a validé
+			# Opens the editing window and retrieves the timer if the user has validated it.
 			dialog = TimerDialog(self, timer)
 			if dialog.exec():
 				
-				# Modifie le timer existant,
+				# Modifies the existing timer,
 				timer = dialog.get_timer()
 				widget.timer = timer
 				
-				# Reset le timer pour mettre à jour les valeurs
+				# Reset timer to update values
 				widget.reset_timer(check_duration=True)
 	
 	def check_timer(self):
-		""" Mis à jour des timers actifs
-			> Déclenchée par le QTimer de rafraîchissement
+		""" Update active timers
+			> Triggered by refresh QTimer
 			
-			- Parcours tous les widgets de la liste pour mettre à jour le temps restant.
-			- Toute la logique de mis à jour se fait ensuite dans les widgets de timers et dans les timers eux-mêmes.
+			- Scroll through all the widgets in the list to update the remaining time.
+			- All the updating logic is then carried out in the timer widgets and in the timers themselves.
 		"""
 		
-		# Parcours des widgets pour mettre à jour les timers
+		# Browse widgets to update timers
 		for widget in self.lst_timer.findChildren(TimerWidget):
 			widget.update_timeleft()
 	
 	def delete_timer(self):
 		"""
-		Suppression d'un timer
-			> Déclenchée par le bouton de suppression
+		Deleting a timer
+			> Triggered by the delete button
 		"""
-		# Obtenir l'index de l'élément sélectionné
+		# Get the index of the selected item
 		current_row = self.lst_timer.currentRow()
 		
-		# Si aucun élément n'est sélectionné, current_row sera -1
+		# If no element is selected, current_row will be -1
 		if current_row != -1:
-			# Retirer et supprimer l'élément
+			# Remove and delete element
 			timer = self.lst_timer.takeItem(current_row)
 		
-		# Vérifie s'il reste un timer dans la liste afin de désactiver le bouton de suppression
+		# Check if there is a timer left in the list to disable the delete button
 		if self.lst_timer.count() == 0:
 			self.btn_delete_timer.setEnabled(False)
 	##
@@ -236,57 +234,56 @@ class TimerView(QWidget):
 	@property
 	def timers(self):
 		"""
-		Propriété renvoyant la liste des timers
-			> Utilisée pour sauvegarder les timers lors de la fermeture de la vue
+		Property returning the list of timers
+			> Used to save timers when closing the view
 			
-		- Récupère les timers depuis le list widget et les retourne
+		- Retrieves timers from the list widget and returns them
 		"""
-		# Récupère le nombre de timer pour vérifier qu'il y en a et boucler sur la liste
+		# Retrieves the number of timers to check that there are any and loop over the list
 		count = self.lst_timer.count()
 		
-		# Si aucun timer, retourne une liste vide
+		# If no timer, returns an empty list
 		if not count:
 			return []
 		
-		# Création de la liste de retour
+		# Creating the return list
 		timers = []
 		
-		# Boucle sur chaque élément de la liste
+		# Loop over each list item
 		for row in range(count):
 			
-			# Récupération de l'item et du widget de la ligne
+			# Retrieve line item and widget
 			item = self.lst_timer.item(row)
 			widget_timer = self.lst_timer.itemWidget(item)
 			
-			# Récupère le timer du widget
+			# Retrieves widget timer
 			if widget_timer and hasattr(widget_timer, 'timer'):
 				timer = widget_timer.timer
 				timers.append(timer)
 		
-		# Retourne la liste des timers
+		# Returns the timer list
 		return timers
 	##
 	
 	#
 	def get_timer(self, item):
 		"""
-			Récupère un timer dans la liste
-				> Lorsque ce dernier est double cliqué
+			Retrieves a timer from the list
+				> When double-clicked
 		"""
-		# Récupération du widget de l'item
+		# Retrieve item widget
 		widget_timer = self.lst_timer.itemWidget(item)
 		
-		# Récupère le timer du widget
+		# Retrieves widget timer
 		if widget_timer and hasattr(widget_timer, 'timer'):
 			timer = widget_timer.timer
 		
-			# Ouvre le formulaire de modification
+			# Open the modification form
 			self.create_timer(timer, widget_timer)
 	##
 	
 	def closeEvent(self, event):
-		""" Fermeture de la vue """
+		""" Close view
+		"""
 		save_timers(self.timers)
 		pass
-	##
-#

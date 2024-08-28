@@ -1,5 +1,5 @@
 
-""" Utils.py / Contient les fonctions utilitaires du projet. """
+""" Utils.py / Contains the project's utility functions. """
 
 from tinydb import TinyDB
 
@@ -18,13 +18,13 @@ PROJECT_PATH = str(Path(PROJECT_DIR))
 # Retrieves the project name at the end of the path after the last slash
 PROJECT_NAME = PROJECT_PATH[PROJECT_PATH.rfind("\\") + 1:]
 
-# Chemin du dossier du projet
+# Project folder path
 CUR_DIR = Path(__file__).resolve().parent.parent
 
 lib_dir = CUR_DIR / "lib"
 lib_dir.mkdir(exist_ok=True)
 
-# Crée le dossier data s'il n'existe pas
+# Creates a data folder if it doesn't exist
 data_dir = CUR_DIR / "data"
 data_dir.mkdir(exist_ok=True)
 config_backup_file = data_dir / "config_backup.json"
@@ -44,7 +44,7 @@ def check_work_path():
 
 
 def get_db():
-	""" Récupère la base de données. """
+	""" Recovers the database. """
 	file = data_dir / "data.json"
 	if not file.exists():
 		file.touch()
@@ -52,8 +52,8 @@ def get_db():
 	return db
 
 
-# Configuration de base attendue dans le fichier config-backup
-# qui est utilisée si elle n'existe pas déjà.
+# Basic configuration expected in config-backup file
+# which is used if it doesn't already exist.
 base_config = {
 	"style": "Combinear",
 	"save_pos": False,
@@ -65,21 +65,21 @@ base_config = {
 
 
 def check_config_backup():
-	""" **Permet de vérifier le fichier de configuration.**
+	""" **Checks the configuration file.**.
 
-	- Crée le fichier de config s'il n'existe pas.
-	- Vérifie que le fichier de config contient les clés attendues en le comparant à la config de base.
-	- Ajoute et sauvegarde les clés manquantes au fichier pour l'application.
+	- Creates the config file if it doesn't exist.
+	- Checks that the config file contains the expected keys by comparing it with the base config.
+	- Adds and saves missing keys to the file for the application.
 
 	:returns:"""
 	import json
 	
-	# Crée le fichier de config_backup s'il n'existe pas
+	# Creates config_backup file if none exists
 	if not config_backup_file.exists():
 		with open(config_backup_file, "w") as f:
 			json.dump(base_config, f, indent=4)
 	
-	# Vérifie que le fichier de config_backup contient les clés attendues
+	# Checks that the config_backup file contains the expected keys
 	with open(config_backup_file) as f:
 		config = json.load(f)
 		for key in base_config.keys():
@@ -89,7 +89,7 @@ def check_config_backup():
 
 
 def get_config_backup():
-	""" Charge et Retourne les options du fichier config_backup """
+	""" Loads and returns options from the config_backup file """
 	import json
 	try:
 		with open(config_backup_file) as f:
@@ -100,7 +100,7 @@ def get_config_backup():
 
 
 def save_config_backup(config: dict):
-	""" Sauvegarde les options dans le fichier config_backup """
+	""" Saves options in config_backup file """
 	import json
 	try:
 		with open(config_backup_file, "w") as f:
@@ -110,7 +110,7 @@ def save_config_backup(config: dict):
 
 
 def set_stylesheet(frame, style_sheet):
-	""" Charger le contenu de la feuille de style depuis le fichier """
+	""" Load stylesheet content from file """
 	qss_path = Path(style_sheet)
 	if qss_path.exists():
 		with open(qss_path) as f:
@@ -119,21 +119,21 @@ def set_stylesheet(frame, style_sheet):
 
 
 def create_log_file():
-	""" Fonction permettant de créer un nouveau fichier de log lors de
-		l'ouverture de l'application pour séparer les suivis d'utilisations
+	""" Function for creating a new log file when
+		opening the application to separate usage tracking
 	"""
 	
-	# Empêche la création d'un fichier de log si cela n'est pas configurer
+	# Prevents the creation of a log file if not configured
 	if not LOG:
 		return
 	
-	# Vérifie si le dossier de log existe
+	# Checks if the log folder exists
 	log_dir = Path(CUR_DIR / "log")
 	print(log_dir)
 	if not log_dir.exists():
 		log_dir.mkdir(exist_ok=True)
 	
-	# Crée un nouveau fichier de log avec la date
+	# Creates a new log file with the date
 	from datetime import datetime
 	_date = datetime.today().strftime("%Y-%m-%d_%H-%M-%S")
 	log_file = "log_" + _date + ".log"
@@ -146,7 +146,7 @@ def create_log_file():
 
 
 def config_log(filepath, level, date: bool = False):
-	""" Configure le fichier de log """
+	""" Configures the log file """
 	
 	if date:
 		form = f"{"-" * 30}" + "\n%(asctime)s : %(levelname)s : \n%(message)s\n"
@@ -162,26 +162,22 @@ def config_log(filepath, level, date: bool = False):
 	)
 
 
-def clamp(value: int | float, min_value: int | float, max_value: int | float) -> int | float:
-	return min(max(value, min_value), max_value)
-
-
 def dbg(*args, sep=" ", end="\n"):
 	
-	""" Affiche les arguments si le mode debug est activé
+	""" Displays arguments if debug mode is enabled
 
-	- Est utilisé pour centraliser l'activation/désactivation de tous les debugs du programme
+	- Used to centralize activation/deactivation of all program debugs
 	
-	:param args: Arguments à afficher
-	:param sep: Séparateur entre les arguments
-	:param end: Fin de ligne
+	:param args: Arguments to display
+	:param sep: Separator between arguments
+	:param end: End of line
 	"""
 	
-	# Affiche un message dans la console si le mode debug est activé
+	# Displays a message in the console if debug mode is enabled
 	if CONSOLE_DEBUG:
 		print(*args, sep=sep, end=end)
 	
-	# Écrit un message dans le fichier de log si le mode debug est activé
+	# Write a message in the log file if debug mode is enabled
 	if LOG:
 		formated_args = sep.join([str(arg) for arg in args])
 		LOG(formated_args)
